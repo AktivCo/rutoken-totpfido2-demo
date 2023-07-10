@@ -1,0 +1,25 @@
+#version: '2'  
+services:
+  rutoken-totpfido2-demo.rutoken.ru-dotnet:
+    container_name: ${APP_CONTAINER_NAME}
+    image: mcr.microsoft.com/dotnet/aspnet:6.0
+    restart: always
+    volumes:
+      - ${APP_FOLDER}:/app
+    ports:
+      - ${APP_OUT_PORT}:5000
+    command: sh -c "apt update && cd /app && dotnet RutokenTotpFido2Demo.dll --urls='http://0.0.0.0:5000' "
+    links:
+      - rutoken-totpfido2-demo.rutoken.ru-psql
+  rutoken-totpfido2-demo.rutoken.ru-psql:
+    container_name: ${DB_CONTAINER_NAME}
+    image: postgres
+    environment:
+      POSTGRES_PASSWORD: ${DB_PSWD}
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_DB: ${DB_NAME}
+    restart: always
+    volumes:
+      - ${DB_FOLDER}:/var/lib/postgresql/data
+    ports:
+      - ${DB_PORT}:5432

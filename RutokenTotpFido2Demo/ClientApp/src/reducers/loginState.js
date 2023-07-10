@@ -1,4 +1,4 @@
-const loginState = (state = false, action) => {
+const loginState = (state = null, action) => {
     switch (action.type) {
         case "SET_LOGIN_STATE":
             return action.payload

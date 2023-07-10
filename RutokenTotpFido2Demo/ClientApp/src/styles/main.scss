@@ -1,7 +1,101 @@
 
 
-body {
-    overflow-y:scroll;
-    margin:0;
-    background-color: gray;
+@import "_global_variables.scss";
+@import "bootstrap/scss/bootstrap.scss";
+
+
+@import "utilities/fonts";
+@import "utilities/colors";
+@import "utilities/borders";
+@import "header/header";
+
+* {
+    font-family: "Roboto", sans-serif;
 }
+
+
+html, body {
+    width: 100%;
+    height: 100vh;
+}
+
+body {
+    overflow-y: scroll;
+    margin: 0;
+    background-color: $main-second-background-color;
+}
+
+html {
+    min-height: 100%;
+}
+
+
+
+
+.register-background {
+    background: $frame-image no-repeat center center fixed; 
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    -o-background-size: cover;
+    background-size: cover;
+}
+
+.register-form-container {
+    background-color: $white;
+    width: 406px;
+    padding: 24px 48px 24px 48px;
+    border-radius: 16px;
+}
+
+.form-control, .btn {
+    height: 48px;
+    border-radius: 8px;
+    margin-bottom: 8px;
+    width: 100%;
+    font-size: 18px;
+    padding-left: 20px;
+}
+
+.btn-danger {
+    background-color: $red;
+    border-color: $red;
+}
+
+.font-size-14px {
+    font-size: 14px;
+}
+
+.font-size-16px {
+    font-size: 16px;
+}
+
+.font-size-18px {
+    font-size: 18px;
+}
+
+.font-color-surfie-green {
+    color: $surfie-green;
+}
+
+.cursor-pointer {
+    cursor: pointer;
+}
+
+
+.personal-container {
+    width: 70%;    
+    border-left: $border;
+    border-right: $border;
+    background-color: $main-first-background-color;
+    min-height: 100vh;
+    margin: auto;
+}
+
+@media all and (max-width: 1210px){
+    .personal-container {
+        width: 100%;
+    }
+}
+
+
+

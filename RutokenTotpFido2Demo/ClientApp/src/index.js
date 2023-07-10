@@ -1,4 +1,4 @@
-import 'bootstrap/dist/css/bootstrap.css';
+// import 'bootstrap/dist/css/bootstrap.css';
 import React from 'react';
 import {createRoot} from 'react-dom/client';
 import CheckLogin from './CheckLogin';
@@ -20,6 +20,6 @@ console.log(store);
 const rootElement = document.getElementById('root');
 const root = createRoot(rootElement);
 
-root.render(<Provider store={store}><App/></Provider>);
+root.render(<Provider store={store}><CheckLogin/></Provider>);
 
 
