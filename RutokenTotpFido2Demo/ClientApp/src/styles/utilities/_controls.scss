@@ -1,0 +1,60 @@
+.form-control, .btn {
+  height: 48px;
+  border-radius: 8px;
+  margin-bottom: 8px;
+  width: 100%;
+  padding-left: 20px;
+}
+
+.btn-danger {
+  background-color: $red;
+  border-color: $red;
+}
+
+
+.cursor-pointer {
+  cursor: pointer;
+}
+
+
+.register-toggle-link {
+  color: $surfie-green;
+  position:relative;
+}
+
+.register-toggle-link::before {
+  content: '';
+  position: absolute;
+  width: 100%;
+  height: 2px;
+  border-radius: 2px;
+  background-color: $surfie-green;
+  bottom: 0;
+  left: 0;
+  top: 20px;
+  transform-origin: center;
+  transform: scaleX(0);
+  transition: transform .3s ease-in-out;
+}
+
+.register-toggle-link:hover::before {
+  transform-origin: center;
+  transform: scaleX(1);
+}
+
+.img__eye {
+  position: absolute;
+  width: 24px;
+  height: 24px;
+  top: 12px;
+  right: 0;
+  margin-right: 10px;
+  background: $eye-closed no-repeat center center;
+  cursor: pointer;
+  outline: none;
+
+
+  &.active {
+    background: $eye-open no-repeat center center;
+  }
+}

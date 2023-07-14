@@ -18,10 +18,10 @@ public class UserService
     public async Task<User> Login(UserRegisterDto model)
     {
         if (string.IsNullOrEmpty(model.UserName))
-            throw new RTFDException("Имя пользователя не может быть пустым");
+            throw new RTFDException("Заполните логин");
 
         if (string.IsNullOrEmpty(model.Password))
-            throw new RTFDException("Пароль не может быть пустым");
+            throw new RTFDException("Заполните пароль");
 
         var user = await
             _context.Users.FirstOrDefaultAsync(usr => usr.UserName == model.UserName.ToLower());
@@ -40,10 +40,10 @@ public class UserService
     public async Task Register(UserRegisterDto model)
     {
         if (string.IsNullOrEmpty(model.UserName))
-            throw new RTFDException("Имя пользователя не может быть пустым");
+            throw new RTFDException("Заполните логин");
 
         if (string.IsNullOrEmpty(model.Password))
-            throw new RTFDException("Пароль не может быть пустым");
+            throw new RTFDException("Заполните пароль");
 
         var user = await
             _context.Users.FirstOrDefaultAsync(usr => usr.UserName == model.UserName.ToLower());
