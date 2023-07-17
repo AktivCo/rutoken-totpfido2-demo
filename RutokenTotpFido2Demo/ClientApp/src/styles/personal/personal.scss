@@ -1,0 +1,99 @@
+.personal {
+    margin-top: 60px;
+}
+
+.personal-heading {
+    font-size: 2rem;
+    margin-bottom: 2rem;
+    @include font-bolder();
+}
+
+.personal-info {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 2rem;
+    @include font-bolder();
+}
+
+.personal-info__logo {
+    background: $user-image;
+    background-position: center center;
+    background-repeat: no-repeat;
+    background-size: contain;
+    width: 28px;
+    height: 28px;
+}
+
+.personal-info__name {
+    font-size: 1.75rem;
+}
+
+.personal-logout {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    cursor: pointer;
+}
+
+.personal-logout__text {
+    font-size: 1.125rem;
+    color: $gray-light;
+}
+
+.personal-logout__logo {
+    background: $logout-image;
+    background-position: center center;
+    background-repeat: no-repeat;
+    background-size: contain;
+    width: 28px;
+    height: 28px;
+}
+
+.personal-expiration {
+    display: flex;
+    gap: 5px;
+}
+
+.personal-expiration__text {
+    color: $gray-light;
+}
+
+.personal-two-factor {
+    display: flex;
+    gap: 5px;
+}
+
+.personal-two-factor__text {
+    color: $gray-light;
+}
+
+.personal-two-factor__value {
+    color: $red;
+}
+
+.personal-two-factor__value--on {
+    color: $green;
+}
+
+.personal-two-factor-heading {
+    font-size: 1.5rem;
+    @include font-bolder();
+}
+
+.personal-two-factor-blocks {
+    display: flex;
+    gap: 20px;
+}
+
+.personal-two-factor-block {
+    flex: 1 1 auto;
+    height: 130px;
+    border: $border;
+    border-radius: $border-radius;
+    font-size: 2rem;
+    @include font-bolder();
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}

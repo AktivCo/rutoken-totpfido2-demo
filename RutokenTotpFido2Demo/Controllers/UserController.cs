@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using RutokenTotpFido2Demo.Extensions;
 using RutokenTotpFido2Demo.Models;
 using RutokenTotpFido2Demo.Services;
 
@@ -29,17 +30,45 @@ public class UserController : ControllerBase
 
     [HttpGet]
     [Route("logout")]
+    [Authorize]
     public async Task<IActionResult> SignOut()
     {
         await HttpContext.SignOutAsync();
         return Ok();
     }
 
+    [HttpGet]
+    [Route("info")]
+    [Authorize]
+    public async Task<IActionResult> Info()
+    {
+        var userInfo = await _userService.GetUserInfo(User.UserId());
+
+        return Ok(userInfo);
+    }
+
+
     [HttpPost]
     [Route("register")]
     public async Task<IActionResult> Register([FromBody] UserRegisterDto model)
     {
         await _userService.Register(model);
+        return Ok();
+    }
+
+    [HttpGet]
+    [Route("registertotp")]
+    public async Task<IActionResult> RegisterTotp()
+    {
+        await _userService.RegisterTotp(User.UserId());
+        return Ok();
+    }
+
+    [HttpGet]
+    [Route("removetotp/{id}")]
+    public async Task<IActionResult> RemoveTotp([FromRoute] int id)
+    {
+        await _userService.RemoveTotp(User.UserId(), id);
         return Ok();
     }
 
@@ -53,7 +82,7 @@ public class UserController : ControllerBase
 
         claims.AddRange(new List<Claim>
         {
-            new Claim("Login", user.UserName),
+            new("Id", user.Id.ToString()),
         });
 
         var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);

@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { setLoginState, checkLoginState } from './actions';
 
 import Login from "./auth/Login";
-import Personal from "./personal"
+import Personal from "./personal/Personal"
 
 const CheckLogin = () => {
 
@@ -23,7 +23,6 @@ const CheckLogin = () => {
 
        dispatch(checkLoginState());
     }, []);
-
 
     if (loginState == null) return null;
     if (loginState) return <Personal />;

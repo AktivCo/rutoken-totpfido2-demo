@@ -1,4 +1,6 @@
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Internal;
+using OtpNet;
 using RutokenTotpFido2Demo.Entities;
 using RutokenTotpFido2Demo.Exceptions;
 using RutokenTotpFido2Demo.Extensions;
@@ -63,6 +65,45 @@ public class UserService
             Password = hashedPassword,
         });
 
+        await _context.SaveChangesAsync();
+    }
+
+
+    public async Task<UserInfoDTO> GetUserInfo(int userId)
+    {
+        var userInfo =
+            await _context.Users
+                .Where(x => x.Id == userId)
+                .Select(x => new UserInfoDTO
+                {
+                    UserName = x.UserName,
+                    FidoKeys = x.FidoKeys,
+                    TotpKeys = x.TotpKeys
+                })
+                .FirstOrDefaultAsync();
+
+
+        if (userInfo == null) throw new RTFDException("Ошибка идентификации");
+
+        return userInfo;
+    }
+
+    public async Task RegisterTotp(int userId)
+    {
+        var totpKey = new TotpKey
+        {
+            UserId = userId
+        };
+        _context.TotpKeys.Add(totpKey);
+        await _context.SaveChangesAsync();
+    }
+
+    public async Task RemoveTotp(int userId, int keyId)
+    {
+        var key = await
+            _context.TotpKeys.FirstOrDefaultAsync(_ => _.UserId == userId && _.Id == keyId);
+        if (key == null) throw new RTFDException("Ключ не найден");
+        _context.TotpKeys.Remove(key);
         await _context.SaveChangesAsync();
     }
 }

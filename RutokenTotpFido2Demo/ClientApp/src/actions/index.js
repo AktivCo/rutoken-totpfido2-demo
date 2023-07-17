@@ -1,8 +1,12 @@
-
 import axios from "axios";
 
 const SET_LOGIN_STATE = (param) => ({
     type: 'SET_LOGIN_STATE',
+    payload: param
+});
+
+const SET_USER_INFO = (param) => ({
+    type: 'SET_USER_INFO',
     payload: param
 });
 
@@ -27,7 +31,8 @@ const checkLoginState = () => {
 
         sequense = sequense
             .then(() => dispatch(SET_LOGIN_STATE(true)))
-            .catch(() => { });
+            .catch(() => {
+            });
 
         return sequense;
     };
@@ -80,5 +85,44 @@ const signOut = () => {
     };
 }
 
+const getUserInfo = () => {
+    return (dispatch) => {
+        let sequense = Promise.resolve();
 
-export { setLoginState, checkLoginState, signInOrUp, signOut };
+        sequense = sequense.then(() => axios.get('/user/info'));
+
+        sequense = sequense
+            .then((response) => dispatch(SET_USER_INFO(response.data)));
+
+        return sequense;
+    };
+}
+
+const registerTotp = () => {
+    return (dispatch) => {
+        let sequense = Promise.resolve();
+
+        sequense = sequense.then(() => axios.get('/user/registertotp'));
+
+        sequense = sequense
+            .then((response) => getUserInfo()(dispatch));
+
+        return sequense;
+    };
+}
+
+const removeTotp = (key) => {
+    return (dispatch) => {
+        console.log(key);
+        let sequense = Promise.resolve();
+
+        sequense = sequense.then(() => axios.get(`/user/removetotp/${key.id}`));
+
+        sequense = sequense
+            .then((response) => getUserInfo()(dispatch));
+
+        return sequense;
+    };
+}
+
+export {setLoginState, checkLoginState, getUserInfo, registerTotp, removeTotp, signInOrUp, signOut};

@@ -36,17 +36,17 @@ $font-size--smallest:12px;
 }
 
 @mixin font-bold(){
-    font-weight: 700;
+    font-weight: 700 !important;
     font-style: normal;
     font-stretch: normal;
 }
 
 @mixin font-bolder(){
-    font-weight: 500;
+    font-weight: 500 !important;
     font-style: normal;
     font-stretch: normal;
 }
 
 .fw-bolder {
-    font-weight: 500 !important;
+    @include font-bolder();
 }
