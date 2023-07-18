@@ -1,0 +1,161 @@
+.add-mfa {
+    @include font-normal;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--light-button-text-primary, #FFF);
+    font-size: 1rem;
+    line-height: 20px;
+    text-align: center;
+    padding: 14px 24px;
+    background: var(--light-button-surface-active, #D23);
+    border: transparent;
+    border-radius: 8px;
+}
+
+.mfa-step-one {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    margin-top: 16px;
+    margin-bottom: 60px;
+}
+
+.step-mfa {
+    @include font-bolder;
+    color: $gray-tint;
+    font-size: 0.875rem;
+}
+
+.title-mfa {
+    @include font-bolder;
+    font-size: 1.5rem;
+    line-height: 28px;
+}
+
+.image-mfa {
+    height: 210px;
+    background-image: $mfa-image;
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center;
+    border-radius: 9px;
+}
+
+.brief-mfa {
+    @include font-normal;
+    font-size: 0.875rem;
+    line-height: 150%;
+}
+
+.without-login {
+    @include font-bolder;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    font-size: 1rem;
+    line-height: 20px;
+}
+.without-paswd-text {
+    @include font-normal;
+    color: $gray-light;
+    font-size: 0.875rem;
+    line-height: 150%;
+}
+.without-login-switch {
+    display: flex;
+    align-items: center;
+    column-gap: 8px;
+}
+
+.link-text {
+    @include font-bolder;
+    color: $surfie-green;
+    text-decoration-line: underline;
+}
+
+.credential-name {
+    @include font-bolder;
+}
+.credential-value {
+    @include font-normal;
+}
+
+.custom-modal .modal-content {
+    width: 420px;
+    max-width: 100%;
+    height: 420px;
+    max-height: 100%;
+}
+.custom-modal .modal-header {
+    align-items: center;    
+    justify-content: center;
+    border: none;
+    padding: 1.3rem;
+}
+.custom-modal .modal-body {
+    padding: 0px 3.4rem;
+    display: flex;
+    justify-content: center;
+    align-items: stretch;
+    flex-direction: column;
+}
+.custom-modal .modal-footer {
+    align-items: center;    
+    justify-content: center;
+    border: none;
+    padding: 1.3rem;
+}
+
+.modal-pb {
+    padding-bottom: 2.7rem;
+}
+.modal-gap {
+    gap: 2.7rem
+}
+
+.modal-edit {
+    height: 100%;
+}
+.modal-edit-bottom {
+    padding-bottom: 2.7rem;
+}
+
+.modal-title {
+    @include font-bold;
+    font-size: 1.5rem;
+    line-height: 28px;
+    text-align: center;
+}
+.modal-input {
+    width: auto;
+}
+.modal-input-error {
+    border-color: $red-fade;
+    border-width: 2px;
+}
+.modal-info-text {
+    color: $gray-fade;
+    white-space: nowrap;
+}
+.modal-result-text {
+    @include font-bold;
+    font-size: 1rem;
+    line-height: 24px;
+    text-align: center;
+    white-space: nowrap;
+}
+.modal-error-text {
+    text-align: center;    
+    word-wrap: break-word;
+}
+
+
+@media screen and (max-width: 340px){
+    .modal-gap {
+        margin: 0px 20px;
+    }
+    .custom-modal .modal-body {
+        padding: 0px 1rem;
+    }
+}

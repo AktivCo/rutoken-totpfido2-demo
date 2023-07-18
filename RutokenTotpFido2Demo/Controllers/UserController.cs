@@ -57,7 +57,7 @@ public class UserController : ControllerBase
         await _userService.Register(model);
         return Ok();
     }
-
+    
 
     [HttpPost]
     [Route("login")]
@@ -70,6 +70,7 @@ public class UserController : ControllerBase
         claims.AddRange(new List<Claim>
         {
             new("Id", user.Id.ToString()),
+            new("Login", user.UserName.ToString()),
         });
 
         var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
@@ -80,4 +81,5 @@ public class UserController : ControllerBase
 
         return Ok();
     }
+    
 }

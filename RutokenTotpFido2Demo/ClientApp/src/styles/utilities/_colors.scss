@@ -1,7 +1,10 @@
 $gray:#444444;
-$gray-light:#888888;
+$gray-light:#808080;
+$gray-fade: #999999;
+$gray-tint: #c5c5c7;
 $gray-lighten:#EDEDED;
 $gray-brightest:#dfdfdf;
+
 $white: #ffffff;
 $update-background:rgba(68, 68, 68, 0.05);
 
@@ -9,7 +12,7 @@ $surfie-green-dark:#2b4240;
 $surfie-green:#117788;
 $surfie-green-light:#007788;
 
-
+$red-fade: #EC2347;
 $red:#dd2233;
 $green: #41AD49;
 
@@ -35,3 +38,8 @@ $border-color: $gray-brightest;
 $key-container-red:$red-light;
 $key-container-green:$surfie-green-light;
 $key-container-dark:$surfie-green-dark;
+
+.person-icon {
+    @include normal-icon;
+    background-image: $person-icon;
+}

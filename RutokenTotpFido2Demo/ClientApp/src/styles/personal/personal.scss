@@ -18,18 +18,16 @@
 
 .personal-info__logo {
     background: $user-image;
-    background-position: center center;
-    background-repeat: no-repeat;
-    background-size: contain;
-    width: 28px;
-    height: 28px;
+    @include normal-icon;
 }
 
 .personal-info__name {
-    font-size: 1.75rem;
+    font-size: 1.5rem;
 }
 
 .personal-logout {
+    font-size: 1rem;
+    color: $gray-tint;
     display: flex;
     align-items: center;
     gap: 5px;
@@ -43,24 +41,16 @@
         background: $logout-image-hover;
     }
     &:hover {
+        color: $red-fade;
         background-color: $gray-lighten;
         border-radius: $border-radius;
     }
     padding: 0.5rem;
 }
 
-.personal-logout__text {
-    font-size: 1.125rem;
-    color: $gray-light;
-}
-
 .personal-logout__logo {
     background: $logout-image;
-    background-position: center center;
-    background-repeat: no-repeat;
-    background-size: contain;
-    width: 28px;
-    height: 28px;
+    @include normal-icon;
 }
 
 .personal-expiration {
@@ -90,6 +80,7 @@
 }
 
 .personal-two-factor-heading {
+    padding: 4px;
     font-size: 1.5rem;
     @include font-bolder();
     padding: 0.5rem 0 0.5rem 0;
@@ -115,13 +106,9 @@
     & .personal-two-factor-block--done {
         position:absolute;
         background: $done-icon;
-        background-position: center center;
-        background-repeat: no-repeat;
-        background-size: contain;
-        height: 28px;
-        width: 28px;
         bottom: 1rem;
         right: 1rem;
+        @include normal-icon;
     }
 }
 
@@ -131,9 +118,15 @@
     padding: 0.5rem 0 0.5rem 0;
 }
 
-
 .personal-add-device-step {
     color: $gray-light;
+}
+
+.item-device {
+    border: 1px solid rgba(100, 100, 100, 0.16);
+    border-radius: 8px;
+    padding: 16px;
+    margin: 16px 0px;
 }
 
 .personal-qrcode__link {

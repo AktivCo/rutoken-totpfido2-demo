@@ -56,18 +56,14 @@ a {
   top: 12px;
   right: 0;
   margin-right: 10px;
-  background: $eye-closed no-repeat center center;
+  background: $eye-closed;
+  @include centered-icon;
   cursor: pointer;
   outline: none;
 
 
   &.active {
-    background: $eye-open no-repeat center center;
+    background: $eye-open;
+    @include centered-icon;
   }
-}
-
-
-.form-label {
-  font-size: 0.875rem;
-  color: $gray-light;
 }

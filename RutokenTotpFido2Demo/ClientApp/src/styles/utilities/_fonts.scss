@@ -1,10 +1,7 @@
-
 $font-size--large:24px;
 $font-size: 16px;
 $font-size--small: 14px;
 $font-size--smallest:12px;
-
-
 
 @font-face {
     font-family: 'Roboto';
@@ -47,6 +44,12 @@ $font-size--smallest:12px;
     font-stretch: normal;
 }
 
+.fw-bold {
+    @include font-bold();
+}
 .fw-bolder {
     @include font-bolder();
+}
+.fw-normal {
+    @include font-normal();
 }

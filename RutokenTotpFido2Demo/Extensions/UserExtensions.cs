@@ -15,5 +15,12 @@ namespace RutokenTotpFido2Demo.Extensions
             }
             return userId;
         }
+
+        public static string UserLogin(this ClaimsPrincipal user)
+        {
+            var userName = user.Claims.FirstOrDefault(c => c.Type == "Login")?.Value;
+
+            return userName;
+        }
     }
 }

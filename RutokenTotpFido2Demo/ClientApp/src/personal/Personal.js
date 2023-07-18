@@ -14,7 +14,7 @@ import RenderTotpKeysList from "./RenderTotpKeysList";
 const RenderTwoFactor = ({fidoKeys, totpKeys}) => {
 
     const renderStatus = () => cn({
-        "personal-two-factor__value": true,
+        "personal-two-factor__value ": true,
         "personal-two-factor__value--on": fidoKeys.length || totpKeys.length
     });
 
@@ -48,15 +48,12 @@ const RenderTwoFactorInit = () => {
         <>
             <div className="d-flex align-items-center justify-content-between mb-3">
                 <div className="personal-two-factor-heading">Добавить второй фактор защиты</div>
-
                 {
                     selectedInitType && (
-                        <div className="personal-logout">
-                            <div className="personal-logout__text"
-                                 onClick={() => selectToggle(null)}
-                            >
-                                Отменить
-                            </div>
+                        <div className="personal-logout personal-logout__text"
+                                onClick={() => selectToggle(null)}
+                        >
+                            Отменить
                         </div>
                     )
                 }
@@ -94,6 +91,7 @@ const RenderTwoFactorInit = () => {
 
 const DevicesContainer = ({fidoKeys, totpKeys}) => {
 
+
     if (fidoKeys.length) {
         return <RenderFidoKeysList keys={fidoKeys}/>;
     }
@@ -121,7 +119,7 @@ const Personal = () => {
         <Layout>
             <div className="personal">
                 <div className="personal-heading">Личный кабинет</div>
-                <div className="mb-5">
+                <div className="mb-3">
                     <div className="d-flex justify-content-between align-items-center mb-3">
                         <div className="personal-info">
                             <div className="personal-info__logo"></div>

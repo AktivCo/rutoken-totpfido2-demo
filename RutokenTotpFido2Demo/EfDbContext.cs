@@ -1,5 +1,8 @@
+using Fido2NetLib.Objects;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using RutokenTotpFido2Demo.Entities;
+using System.Net;
 
 namespace RutokenTotpFido2Demo;
 
@@ -16,7 +19,15 @@ public class EfDbContext : DbContext
         modelBuilder
             .Entity<User>()
             .HasKey(el => el.Id);
-        
+
+        modelBuilder
+            .Entity<FidoKey>()
+            .Property(p => p.RegDate)
+            .HasConversion<DateTimeConverter>();
+        modelBuilder
+            .Entity<FidoKey>()
+            .Property(p => p.LastLogin)
+            .HasConversion<DateTimeConverter>();
         modelBuilder
             .Entity<FidoKey>()
             .HasKey(el => el.Id);
@@ -45,3 +56,12 @@ public class EfDbContext : DbContext
     public DbSet<FidoKey> FidoKeys { get; set; }
 }
 
+public class DateTimeConverter : ValueConverter<DateTime, DateTime>
+{
+    public DateTimeConverter()
+        : base(
+            set => set.Kind == DateTimeKind.Utc ? set : DateTime.SpecifyKind(set, DateTimeKind.Utc),
+            get => get.Kind == DateTimeKind.Local ? get : DateTime.SpecifyKind(get, DateTimeKind.Local))
+    {
+    }
+}

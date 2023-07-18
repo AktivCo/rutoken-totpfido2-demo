@@ -1,16 +1,15 @@
-
-
 @import "_global_variables.scss";
 @import "bootstrap/scss/bootstrap.scss";
 
 
+@import "utilities/images";
 @import "utilities/fonts";
 @import "utilities/colors";
 @import "utilities/borders";
 @import "utilities/controls";
-@import "header/header";
 @import "layout/layout";
 @import "personal/personal";
+@import "personal/fido";
 
 * {
     font-family: "Roboto", sans-serif;
@@ -32,7 +31,6 @@ body {
 html {
     min-height: 100%;
 }
-
 
 .register-background {
     background: $frame-image no-repeat center center fixed; 
@@ -65,5 +63,79 @@ html {
     }
 }
 
+.modal-dialog {
+    max-width: 420px;
+}
+.modal-body {
+    padding: 1.3rem 3.3rem;
+}
+@media screen and (max-width: 360px){
+    .modal-body {
+        padding: 1rem;
+    }
+}
+.modal-content {
+    border-radius: 12px;
+}
 
+.gap-4 {
+    gap: 4px !important;
+}
+.gap-8 {
+    gap: 8px;
+}
+.gap-16 {
+    gap: 16px;
+}
+.gap-20 {
+    gap: 20px;
+}
+.gap-32 {
+    gap: 32px;
+}
+.column-gap-4 {
+    column-gap: 4px;
+}
+
+.spinner {
+    @include large-icon;
+    background-image: $spinner;
+}
+.check-mark-big {
+    @include large-icon;
+    background-image: $check-mark-big;
+}
+.attention-big {
+    @include large-icon;
+    background-image: $attention-big;
+}
+.person-icon {
+    @include normal-icon;
+    background-image: $person-icon;
+}
+.bucket-icon {
+    @include normal-icon;
+    background-image: $bucket-icon;
+}
+.bucket-icon:hover {
+    background-image: $bucket-red-icon;
+}
+.edit-icon {
+    @include small-icon;
+    background-image: $edit-icon;
+}
+
+.fade-modal {
+    animation-name: fade-modal;
+    animation-duration: 2s;
+}
+@keyframes fade-modal {
+    from {
+        opacity: .0;
+    }
+  
+    to {
+        opacity: 1;
+    }
+  }
 

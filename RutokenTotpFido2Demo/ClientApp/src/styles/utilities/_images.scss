@@ -1,0 +1,26 @@
+@mixin centered-icon {
+    background-position: center center;
+    background-repeat: no-repeat;
+    background-size: contain;
+}
+
+@mixin small-icon {
+    @include centered-icon;
+    height: 24px;
+    width: 24px;
+    min-width: 24px;
+}
+
+@mixin normal-icon {
+    @include centered-icon;
+    width: 28px;
+    height: 28px;
+    min-width: 28px;
+}
+
+@mixin large-icon {
+    @include centered-icon;
+    height: 70px;
+    width: 70px;
+    min-width: 70px;
+}

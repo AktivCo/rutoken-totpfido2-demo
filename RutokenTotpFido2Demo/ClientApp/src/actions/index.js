@@ -1,4 +1,5 @@
 import axios from "axios";
+import { coerceToArrayBuffer, coerceToBase64Url } from "../utils/utils";
 
 const SET_LOGIN_STATE = (param) => ({
     type: 'SET_LOGIN_STATE',
@@ -124,23 +125,6 @@ const removeTotp = (key) => {
     };
 }
 
-const registerFido = () => {
-    return (dispatch) => {
-        let sequense = Promise.resolve();
-
-        sequense = sequense.then(() => {
-            //register
-            let pr = new Promise((resolve, reject) => {
-                setTimeout(() => resolve(), 2000);
-            })
-            return pr;
-        });
-
-        return sequense;
-    };
-}
-
-
 const getSecret = () => {
     return (dispatch) => {
         let sequense = Promise.resolve();
@@ -190,7 +174,6 @@ const checkTotp = (totpPassword) => {
     };
 }
 
-
 const cacheTotpParams = (params) => (dispatch) => {
     const sequense = Promise.resolve().then(() => {
         dispatch({
@@ -199,6 +182,98 @@ const cacheTotpParams = (params) => (dispatch) => {
         });
     });
     return sequense;
+}
+
+const registerFido = () => {
+    return (dispatch) => {
+        let sequense = Promise.resolve();
+        
+        sequense = sequense.then(() => axios.get('/mfa/makecredentialoptions'));
+
+        sequense = sequense.then((response) => {
+            let option = JSON.parse(response.data);
+            if (option.status !== "ok")
+                throw new Error("Ошибка регистрации токена");
+
+            option.challenge = coerceToArrayBuffer(option.challenge);
+            option.user.id = coerceToArrayBuffer(option.user.id);
+            option.excludeCredentials = option.excludeCredentials.map((x) => {
+                x.id = coerceToArrayBuffer(x.id);
+                return x;
+            });
+            if (option.authenticatorSelection.authenticatorAttachment === null) 
+                option.authenticatorSelection.authenticatorAttachment = undefined;
+
+            return option;
+        });
+
+        sequense = sequense.then((response) => {
+            return navigator.credentials.create({
+                publicKey: response
+            });
+        });
+
+        return sequense;
+    };
+}
+
+const confirmRegisterFido  =  (credential, label, isWithoutLogin) => {
+    return (dispatch) => {
+        let sequense = Promise.resolve();
+
+		let attestationObject = new Uint8Array(credential.response.attestationObject);
+		let clientDataJSON = new Uint8Array(credential.response.clientDataJSON);
+		let rawId = new Uint8Array(credential.rawId);
+
+        const attestationResponse = {
+			id: credential.id,
+			rawId: coerceToBase64Url(rawId),
+			type: credential.type,
+			extensions: credential.getClientExtensionResults(),
+			response: {
+				AttestationObject: coerceToBase64Url(attestationObject),
+				clientDataJson: coerceToBase64Url(clientDataJSON)
+			}
+		};
+        
+        sequense = sequense.then(() => axios.post('/mfa/makecredential', {attestationResponse, label, isWithoutLogin}));
+
+        sequense = sequense.then((response) => {
+            let result = response.data;
+            if (result.status !== "ok") 
+                throw new Error("Ошибка подтверждения регистрации токена");
+
+            return result;
+        });
+        
+        sequense = sequense.then((response) => getUserInfo()(dispatch));
+
+        return sequense;
+    };
+}
+
+const renameDeviceFido = (id, label) => {
+    return (dispatch) => {
+        let sequense = Promise.resolve();
+
+        sequense = sequense.then(() => axios.post('/mfa/renamedevice', {id, label}));
+
+        sequense = sequense.then((response) => getUserInfo()(dispatch));
+
+        return sequense;
+    };
+}
+
+const deleteDeviceFido = (id) => {
+    return (dispatch) => {
+        let sequense = Promise.resolve();
+
+        sequense = sequense.then(() => axios.post('/mfa/deletefidokey', null, { params: { id: id}}));
+        
+        sequense = sequense.then((response) => getUserInfo()(dispatch));
+
+        return sequense;
+    };
 }
 
 const showModal = (modal, data) => (dispatch) => {
@@ -227,18 +302,24 @@ const hideModal = () => (dispatch) => {
 
 
 export {
+    signInOrUp,
+    signOut,
     setLoginState,
     checkLoginState,
     getUserInfo,
+
+    getSecret,
+    getQrCodeLink,
     registerTotp,
     removeTotp,
-    signInOrUp,
-    signOut,
-    registerFido,
-    getSecret,
     cacheTotpParams,
-    getQrCodeLink,
     checkTotp,
+
+    registerFido,
+    confirmRegisterFido,
+    renameDeviceFido,
+    deleteDeviceFido,
+    
     showModal,
     hideModal
 };

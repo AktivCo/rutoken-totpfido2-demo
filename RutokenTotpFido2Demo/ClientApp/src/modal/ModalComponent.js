@@ -1,14 +1,22 @@
 import React from 'react';
-import {Modal, ModalBody, ModalHeader} from "reactstrap";
+import {Modal, ModalBody, ModalFooter, ModalHeader} from "reactstrap";
 
-
-const ModalComponent = ({title, children}) => {
+const ModalComponent = ({title, footer, children, rootCss}) => {
     return (
-        <Modal isOpen={true} fade={false}>
-            <ModalHeader>{title}</ModalHeader>
+        <Modal className={rootCss} isOpen={true} fade={false} centered>
+            {
+                title &&
+                <ModalHeader>{title}</ModalHeader>
+            }
             <ModalBody>
                 {children}
             </ModalBody>
+            {
+                footer &&
+                <ModalFooter>
+                    {footer}
+                </ModalFooter>
+            }
         </Modal>
     )
 }
