@@ -9,6 +9,7 @@ import thunk from 'redux-thunk'
 import {Provider} from 'react-redux';
 import {applyMiddleware, createStore} from 'redux';
 import rootReducer from './reducers';
+import ModalContainer from "./modal/ModalContainer";
 
 
 const store = createStore(rootReducer, applyMiddleware(thunk))
@@ -17,6 +18,6 @@ const store = createStore(rootReducer, applyMiddleware(thunk))
 const rootElement = document.getElementById('root');
 const root = createRoot(rootElement);
 
-root.render(<Provider store={store}><CheckLogin/></Provider>);
+root.render(<Provider store={store}><CheckLogin/><ModalContainer /></Provider>);
 
 

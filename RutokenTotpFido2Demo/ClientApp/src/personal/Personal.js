@@ -5,8 +5,8 @@ import cn from "classnames";
 import {getUserInfo, signOut} from "../actions";
 
 import Layout from "../common/Layout";
-import InitFido from "./InitFido";
-import InitTotp from "./InitTotp";
+import InitFido from "./fido/InitFido";
+import InitTotp from "./totp/InitTotp";
 import RenderFidoKeysList from "./RenderFidoKeysList";
 import RenderTotpKeysList from "./RenderTotpKeysList";
 

@@ -19,9 +19,24 @@ const userInfo = (state = null, action) => {
     }
 }
 
+const modal = (state = { modal: null, data: {} }, action) => {
+    if (action.type === 'SHOW_MODAL') {
+        return {
+            ...state,
+            modal: action.payload.modal,
+            data: action.payload.data,
+        };
+    }
+    if (action.type === 'HIDE_MODAL') {
+        return { modal: null, data: {} };
+    }
+    return state;
+};
+
 const rootReducer = combineReducers({
     loginState,
-    userInfo
+    userInfo,
+    modal
 });
 
 export default rootReducer;

@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using OtpNet;
 using RutokenTotpFido2Demo.Extensions;
 using RutokenTotpFido2Demo.Models;
 using RutokenTotpFido2Demo.Services;
@@ -55,22 +56,7 @@ public class UserController : ControllerBase
         await _userService.Register(model);
         return Ok();
     }
-
-    [HttpGet]
-    [Route("registertotp")]
-    public async Task<IActionResult> RegisterTotp()
-    {
-        await _userService.RegisterTotp(User.UserId());
-        return Ok();
-    }
-
-    [HttpGet]
-    [Route("removetotp/{id}")]
-    public async Task<IActionResult> RemoveTotp([FromRoute] int id)
-    {
-        await _userService.RemoveTotp(User.UserId(), id);
-        return Ok();
-    }
+    
 
     [HttpPost]
     [Route("login")]
@@ -93,4 +79,5 @@ public class UserController : ControllerBase
 
         return Ok();
     }
+    
 }

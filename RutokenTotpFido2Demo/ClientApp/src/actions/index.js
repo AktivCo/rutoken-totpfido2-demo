@@ -125,4 +125,58 @@ const removeTotp = (key) => {
     };
 }
 
-export {setLoginState, checkLoginState, getUserInfo, registerTotp, removeTotp, signInOrUp, signOut};
+const registerFido = () => {
+    return (dispatch) => {
+        let sequense = Promise.resolve();
+
+        sequense = sequense.then(() => {
+            //register
+            let pr = new Promise((resolve, reject) => {
+                setTimeout(() => resolve(), 2000);
+            })
+            return pr;
+        });
+        
+
+        return sequense;
+    };
+}
+
+
+const showModal = (modal, data) => (dispatch) => {
+
+    const sequense = Promise.resolve().then(() => {
+        dispatch({
+            type: 'SHOW_MODAL',
+            payload: {
+                modal,
+                data,
+            },
+        });
+    });
+    return sequense;
+};
+
+const hideModal = () => (dispatch) => {
+    const sequense = Promise.resolve().then(() => {
+        dispatch({
+            type: 'HIDE_MODAL',
+            payload: null,
+        });
+    });
+    return sequense;
+};
+
+
+export {
+    setLoginState,
+    checkLoginState,
+    getUserInfo,
+    registerTotp,
+    removeTotp,
+    signInOrUp,
+    signOut,
+    registerFido,
+    showModal,
+    hideModal
+};

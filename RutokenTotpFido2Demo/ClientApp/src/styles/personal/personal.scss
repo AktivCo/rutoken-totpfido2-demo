@@ -92,7 +92,7 @@
 .personal-two-factor-heading {
     font-size: 1.5rem;
     @include font-bolder();
-    padding: 0.5rem;
+    padding: 0.5rem 0 0.5rem 0;
 }
 
 .personal-two-factor-blocks {
@@ -123,4 +123,15 @@
         bottom: 1rem;
         right: 1rem;
     }
+}
+
+.personal-add-device-header {
+    font-size: 1.25rem;
+    @include font-bolder();
+    padding: 0.5rem 0 0.5rem 0;
+}
+
+
+.personal-add-device-step {
+    color: $gray-light;
 }
