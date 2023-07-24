@@ -46,7 +46,7 @@ const RenderTwoFactorInit = () => {
 
     return (
         <>
-            <div className="d-flex align-item-center justify-content-between mb-3">
+            <div className="d-flex align-items-center justify-content-between mb-3">
                 <div className="personal-two-factor-heading">Добавить второй фактор защиты</div>
 
                 {
@@ -64,16 +64,26 @@ const RenderTwoFactorInit = () => {
 
             <div className="personal-two-factor-blocks">
                 <div
-                    className="personal-two-factor-block"
+                    className="personal-two-factor-block cursor-pointer"
                     onClick={() => selectToggle("TOTP")}
                 >
                     OTP
+                    {
+                        selectedInitType === 'TOTP'
+                            ? <span className="personal-two-factor-block--done"/>
+                            : null
+                    }
                 </div>
                 <div
-                    className="personal-two-factor-block"
+                    className="personal-two-factor-block cursor-pointer"
                     onClick={() => selectToggle("FIDO")}
                 >
                     MFA
+                    {
+                        selectedInitType === 'FIDO'
+                            ? <span className="personal-two-factor-block--done"/>
+                            : null
+                    }
                 </div>
             </div>
 
@@ -112,7 +122,7 @@ const Personal = () => {
             <div className="personal">
                 <div className="personal-heading">Личный кабинет</div>
                 <div className="mb-5">
-                    <div className="d-flex justify-content-between mb-3">
+                    <div className="d-flex justify-content-between align-items-center mb-3">
                         <div className="personal-info">
                             <div className="personal-info__logo"></div>
                             <div className="personal-info__name">{userInfo.userName}</div>

@@ -34,6 +34,19 @@
     align-items: center;
     gap: 5px;
     cursor: pointer;
+    transition: 0.3s;
+    &:hover > .personal-logout__text {
+        color:$red;
+    }
+    
+    &:hover > .personal-logout__logo {
+        background: $logout-image-hover;
+    }
+    &:hover {
+        background-color: $gray-lighten;
+        border-radius: $border-radius;
+    }
+    padding: 0.5rem;
 }
 
 .personal-logout__text {
@@ -79,6 +92,7 @@
 .personal-two-factor-heading {
     font-size: 1.5rem;
     @include font-bolder();
+    padding: 0.5rem;
 }
 
 .personal-two-factor-blocks {
@@ -96,4 +110,17 @@
     display: flex;
     justify-content: center;
     align-items: center;
+    position: relative;
+    
+    & .personal-two-factor-block--done {
+        position:absolute;
+        background: $done-icon;
+        background-position: center center;
+        background-repeat: no-repeat;
+        background-size: contain;
+        height: 28px;
+        width: 28px;
+        bottom: 1rem;
+        right: 1rem;
+    }
 }
