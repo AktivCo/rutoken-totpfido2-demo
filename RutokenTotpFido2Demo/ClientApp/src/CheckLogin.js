@@ -1,10 +1,10 @@
-import React, { useEffect } from "react";
+import React, {useEffect} from "react";
 import axios from "axios";
-import { useDispatch, useSelector } from 'react-redux';
-import { setLoginState, checkLoginState } from './actions';
+import {useDispatch, useSelector} from 'react-redux';
+import {setLoginState, checkLoginState} from './actions';
 
 import Login from "./auth/Login";
-import Personal from "./personal/Personal"
+import Personal from "./personal/Personal";
 
 const CheckLogin = () => {
 
@@ -21,12 +21,12 @@ const CheckLogin = () => {
             },
         );
 
-       dispatch(checkLoginState());
+        dispatch(checkLoginState());
     }, []);
 
     if (loginState == null) return null;
-    if (loginState) return <Personal />;
-    return <Login />;
+    if (loginState) return <Personal/>;
+    return <Login/>;
 
 
 }

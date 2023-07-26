@@ -5,7 +5,6 @@ using RutokenTotpFido2Demo.Exceptions;
 using RutokenTotpFido2Demo.Services;
 
 var builder = WebApplication.CreateBuilder(args);
-
 // Add services to the container.
 
 builder.Services.AddControllersWithViews();
@@ -23,6 +22,7 @@ builder.Services
 
 
 builder.Services.AddScoped<UserService>();
+builder.Services.AddScoped<QrCodeService>();
 
 
 var app = builder.Build();

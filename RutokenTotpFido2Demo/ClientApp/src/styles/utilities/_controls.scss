@@ -42,6 +42,13 @@
   transform: scaleX(1);
 }
 
+a {
+  color: $surfie-green-light;
+  &:hover {
+    color: $surfie-green-light;
+  }
+}
+
 .img__eye {
   position: absolute;
   width: 24px;

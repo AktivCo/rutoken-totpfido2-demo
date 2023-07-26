@@ -62,7 +62,7 @@ public class UserService
         await _context.Users.AddAsync(new User
         {
             UserName = model.UserName,
-            Password = hashedPassword,
+            Password = hashedPassword
         });
 
         await _context.SaveChangesAsync();
@@ -83,17 +83,19 @@ public class UserService
                 .FirstOrDefaultAsync();
 
 
-        if (userInfo == null) throw new RTFDException("Ошибка идентификации");
-
         return userInfo;
     }
 
-    public async Task RegisterTotp(int userId)
+    public async Task RegisterTotp(int userId, TotpParamsDTO totpParamsDto)
     {
         var totpKey = new TotpKey
         {
-            UserId = userId
+            UserId = userId,
+            Secret = totpParamsDto.Secret,
+            HashMode = totpParamsDto.HashMode,
+            TimeStep = totpParamsDto.TimeStep
         };
+        
         _context.TotpKeys.Add(totpKey);
         await _context.SaveChangesAsync();
     }
@@ -102,8 +104,11 @@ public class UserService
     {
         var key = await
             _context.TotpKeys.FirstOrDefaultAsync(_ => _.UserId == userId && _.Id == keyId);
+        
         if (key == null) throw new RTFDException("Ключ не найден");
+        
         _context.TotpKeys.Remove(key);
         await _context.SaveChangesAsync();
     }
+
 }

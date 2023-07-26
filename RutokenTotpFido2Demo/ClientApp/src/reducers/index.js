@@ -1,4 +1,4 @@
-import { combineReducers } from 'redux';
+import {combineReducers} from 'redux';
 
 
 const loginState = (state = null, action) => {
@@ -19,7 +19,17 @@ const userInfo = (state = null, action) => {
     }
 }
 
-const modal = (state = { modal: null, data: {} }, action) => {
+const totpParams = (state = {}, action) => {
+    switch (action.type) {
+        case "TOTP_PARAMS":
+            return action.payload
+        default:
+            return state
+    }
+}
+
+
+const modal = (state = {modal: null, data: {}}, action) => {
     if (action.type === 'SHOW_MODAL') {
         return {
             ...state,
@@ -28,7 +38,7 @@ const modal = (state = { modal: null, data: {} }, action) => {
         };
     }
     if (action.type === 'HIDE_MODAL') {
-        return { modal: null, data: {} };
+        return {modal: null, data: {}};
     }
     return state;
 };
@@ -36,6 +46,7 @@ const modal = (state = { modal: null, data: {} }, action) => {
 const rootReducer = combineReducers({
     loginState,
     userInfo,
+    totpParams,
     modal
 });
 

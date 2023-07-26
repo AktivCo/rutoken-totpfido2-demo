@@ -1,3 +1,4 @@
+using System.Net;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
@@ -44,7 +45,7 @@ public class UserController : ControllerBase
     public async Task<IActionResult> Info()
     {
         var userInfo = await _userService.GetUserInfo(User.UserId());
-
+        if (userInfo == null) return StatusCode((int)HttpStatusCode.Forbidden);
         return Ok(userInfo);
     }
 
@@ -56,7 +57,7 @@ public class UserController : ControllerBase
         await _userService.Register(model);
         return Ok();
     }
-    
+
 
     [HttpPost]
     [Route("login")]
@@ -79,5 +80,4 @@ public class UserController : ControllerBase
 
         return Ok();
     }
-    
 }

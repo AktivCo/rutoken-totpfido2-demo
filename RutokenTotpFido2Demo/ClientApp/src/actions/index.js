@@ -99,10 +99,10 @@ const getUserInfo = () => {
 }
 
 const registerTotp = () => {
-    return (dispatch) => {
+    return (dispatch, getState) => {
         let sequense = Promise.resolve();
 
-        sequense = sequense.then(() => axios.get('/user/registertotp'));
+        sequense = sequense.then(() => axios.post('/totp/register', getState().totpParams));
 
         sequense = sequense
             .then((response) => getUserInfo()(dispatch));
@@ -113,10 +113,9 @@ const registerTotp = () => {
 
 const removeTotp = (key) => {
     return (dispatch) => {
-        console.log(key);
         let sequense = Promise.resolve();
 
-        sequense = sequense.then(() => axios.get(`/user/removetotp/${key.id}`));
+        sequense = sequense.then(() => axios.get(`/totp/remove/${key.id}`));
 
         sequense = sequense
             .then((response) => getUserInfo()(dispatch));
@@ -136,12 +135,71 @@ const registerFido = () => {
             })
             return pr;
         });
-        
 
         return sequense;
     };
 }
 
+
+const getSecret = () => {
+    return (dispatch) => {
+        let sequense = Promise.resolve();
+
+        sequense = sequense.then(() => axios.get(`/totp/getsecret`));
+
+        sequense = sequense
+            .then((response) => response.data);
+
+        return sequense;
+
+    };
+}
+
+const getQrCodeLink = () => {
+    return (dispatch, getState) => {
+
+        let sequense = Promise.resolve();
+
+        sequense = sequense.then(() => axios.post(`/totp/qr`, getState().totpParams));
+
+        sequense = sequense
+            .then((response) => response.data);
+
+        return sequense;
+
+    };
+}
+
+const checkTotp = (totpPassword) => {
+    return (dispatch, getState) => {
+
+        const checkParams = {
+            ...getState().totpParams,
+            totpPassword
+        }
+        
+        let sequense = Promise.resolve();
+        
+        sequense = sequense.then(() => axios.post(`/totp/check`, checkParams));
+
+        sequense = sequense
+            .then((response) => response.data);
+
+        return sequense;
+
+    };
+}
+
+
+const cacheTotpParams = (params) => (dispatch) => {
+    const sequense = Promise.resolve().then(() => {
+        dispatch({
+            type: 'TOTP_PARAMS',
+            payload: params
+        });
+    });
+    return sequense;
+}
 
 const showModal = (modal, data) => (dispatch) => {
 
@@ -177,6 +235,10 @@ export {
     signInOrUp,
     signOut,
     registerFido,
+    getSecret,
+    cacheTotpParams,
+    getQrCodeLink,
+    checkTotp,
     showModal,
     hideModal
 };

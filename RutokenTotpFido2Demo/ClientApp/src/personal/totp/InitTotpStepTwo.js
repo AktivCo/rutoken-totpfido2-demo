@@ -1,64 +1,119 @@
-import React from "react";
+import React, {useState} from "react";
 import StepContainer from "../StepContainer";
 import {Form, FormGroup, Input, Label} from "reactstrap";
+import {useDispatch} from "react-redux";
+import {cacheTotpParams, getSecret} from "../../actions";
 
 const InitTotpStepTwo = ({currentStep, toNextStep}) => {
     const stepId = 2;
+    const dispatch = useDispatch();
+    const [hashMode, changeHashMode] = useState(0);
+    const [timeStep, changeTimeStep] = useState(30);
+    const [secret, changeSecret] = useState('PTCSFHAAXGA44KIEPYY5GVBCH7SZXCDA');
+    
+    const submit = () => {
 
-    const generateSecret = () => {
-        alert();
+        dispatch(
+            cacheTotpParams({
+                hashMode: Number(hashMode),
+                timeStep: Number(timeStep),
+                secret
+            }))
+            .then(() => toNextStep(stepId + 1));
     }
+
+    const navigateBack = () => {
+        toNextStep(stepId);
+    }
+    const generateSecret = () => {
+        dispatch(getSecret())
+            .then((generatedSecret) => {
+                changeSecret(generatedSecret);
+            });
+    }
+
     return (
         <StepContainer
             stepId={stepId}
             header={"Выберите настройки"}
             currentStep={currentStep}
-            toNextStep={toNextStep}
+            toNextStep={submit}
         >
             <div>
                 Выберите настройки здесь и продублируйте их в приложении.
             </div>
-            <Form className="mt-2">
-                <div className="row">
-                    <FormGroup className="col-md-6">
-                        <Label for="exampleEmail" className="mr-sm-2">Шаг времени</Label>
-                        <Input type="select" className="form-control" name="select" id="exampleSelect">
-                            <option>30 секунд</option>
-                            <option>60 секунд</option>
-                            <option>120 секунд</option>
-                        </Input>
-                    </FormGroup>
-                    <FormGroup className="col-md-6">
-                        <Label for="examplePassword">Алгоритм</Label>
-                        <Input type="select" className="form-control" name="select" id="exampleSelect">
-                            <option>SHA1</option>
-                            <option>SHA256</option>
-                            <option>SHA512</option>
-                        </Input>
-                    </FormGroup>
-                </div>
-                <div className="row">
-                    <FormGroup className="col-md-6">
-                        <Label for="exampleEmail" className="mr-sm-2">Секретный ключ</Label>
-                        <Input type="text" className="form-control" name="select" id="exampleSelect"/>
-                    </FormGroup>
-                    <FormGroup className="col-md-6  d-flex align-items-center">
-                        <div className="text-center d-block mt-4">
+            <div disabled={stepId !== currentStep}>
+                <Form className="mt-2">
+
+                    <div className="row">
+                        <FormGroup className="col-md-6">
+                            <Label for="timeStep" className="mr-sm-2">Шаг времени</Label>
+                            <Input type="select"
+                                   className="form-control"
+                                   name="select"
+                                   value={timeStep}
+                                   onChange={(evt) => changeTimeStep(evt.target.value)}
+                            >
+                                <option value={15}>15 секунд</option>
+                                <option value={30}>30 секунд</option>
+                                <option value={60}>60 секунд</option>
+                            </Input>
+                        </FormGroup>
+                        <FormGroup className="col-md-6">
+                            <Label for="hashMode">Алгоритм</Label>
+                            <Input type="select"
+                                   className="form-control"
+                                   name="select"
+                                   value={hashMode}
+                                   onChange={(evt) => changeHashMode(evt.target.value)}
+                            >
+                                <option value={0}>SHA1</option>
+                                <option value={1}>SHA256</option>
+                                <option value={2}>SHA512</option>
+                            </Input>
+                        </FormGroup>
+                    </div>
+                    <div className="row">
+                        <FormGroup className="col-md-6">
+                            <Label for="secret" className="mr-sm-2">Секретный ключ</Label>
+                            <Input
+                                type="text"
+                                className="form-control"
+                                name="select" value={secret}
+                                onChange={(evt) => changeSecret(evt.target.value)}
+                            />
+                        </FormGroup>
+                        <FormGroup className="col-md-6  d-flex align-items-center">
+                            <div className="text-center d-block mt-4">
                             <span className="register-toggle-link fw-bolder cursor-pointer"
                                   onClick={() => generateSecret()}
                             >
                                 Сгенерировать
                             </span>
-                        </div>
-                    </FormGroup>
-                </div>
-            </Form>
-            <small className="text-secondary d-block">
-                Введите известный вам ключ для Рутокена OTP или сгенерируйте его.
-            </small>
-            <small className="text-secondary d-block">
-                Значение ключа должно быть представлено в кодировке base32 или в формате HEX.
-            </small>
+                            </div>
+                        </FormGroup>
+                    </div>
+                </Form>
+                <small className="text-secondary d-block">
+                    Введите известный вам ключ для Рутокена OTP или сгенерируйте его.
+                </small>
+                <small className="text-secondary d-block">
+                    Значение ключа должно быть представлено в кодировке base32 или в формате HEX.
+                </small>
+            </div>
+            {
+                stepId !== currentStep && (
+                    <div className="d-block mt-4">
+                        <span className="register-toggle-link fw-bolder cursor-pointer"
+                              onClick={() => navigateBack()}
+                        >
+                            Изменить настройки
+                        </span>
+                    </div>
+                )
+            }
+
+
         </StepContainer>
     );
 };

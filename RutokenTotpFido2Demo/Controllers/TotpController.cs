@@ -2,48 +2,67 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using OtpNet;
 using RutokenTotpFido2Demo.Extensions;
+using RutokenTotpFido2Demo.Models;
 using RutokenTotpFido2Demo.Services;
 
 namespace RutokenTotpFido2Demo.Controllers;
 
 [Route("totp")]
-[Authorize]
+// [Authorize]
 public class TotpController : ControllerBase
 {
     private readonly UserService _userService;
+    private readonly QrCodeService _qrCodeService;
 
-    public TotpController(UserService userService)
+    public TotpController(UserService userService, QrCodeService qrCodeService)
     {
         _userService = userService;
+        _qrCodeService = qrCodeService;
     }
 
     [HttpGet]
-    [Route("secret")]
-    public async Task<IActionResult> GenerateSecret()
+    [Route("getsecret")]
+    public IActionResult GenerateSecret()
     {
-        return Ok();
+        var key = KeyGeneration.GenerateRandomKey(20);
+
+        var base32String = Base32Encoding.ToString(key);
+
+        return Ok(base32String);
+    }
+
+    [HttpPost]
+    [Route("qr")]
+    public IActionResult Qr([FromBody] TotpParamsDTO totpParams)
+    {
+        var qrCode = _qrCodeService.GenerateQRCore("", totpParams);
+        var image = Convert.ToBase64String(qrCode);
+
+        return Ok("data:image/png;base64," + image);
     }
 
     // GET
-    [HttpGet]
-    [Route("/{id}")]
-    public async Task<IActionResult> TotpTest([FromRoute] string id)
+    [HttpPost]
+    [Route("check")]
+    public IActionResult TotpCheck([FromBody] TotpParamsDTO totpParams)
     {
-        var secretKey = "PTCSFHAAXGA44KIEPYY5GVBCH7SZXCDA";
+        var secretKey = totpParams.Secret;
         var base32Bytes = Base32Encoding.ToBytes(secretKey);
-        var totp = new Totp(base32Bytes, step: 30, mode: OtpHashMode.Sha1);
-        var window = new VerificationWindow(previous: 3);
-        long timeWindowUsed;
-        var x = totp.VerifyTotp(id, out timeWindowUsed, new VerificationWindow(previous: 3));
+        var totp = new Totp(base32Bytes, step: totpParams.TimeStep, mode: totpParams.HashMode);
+
+        var checkResult
+            = totp.VerifyTotp(totpParams.TotpPassword, out _, new VerificationWindow(previous: 3));
+
+        if (!checkResult) return BadRequest();
 
         return Ok();
     }
 
-    [HttpGet]
+    [HttpPost]
     [Route("register")]
-    public async Task<IActionResult> RegisterTotp()
+    public async Task<IActionResult> RegisterTotp([FromBody] TotpParamsDTO totpParams)
     {
-        await _userService.RegisterTotp(User.UserId());
+        await _userService.RegisterTotp(User.UserId(), totpParams);
         return Ok();
     }
 

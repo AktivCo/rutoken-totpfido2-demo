@@ -7,7 +7,7 @@ const StepContainer = ({currentStep, stepId, header, toNextStep, btnTitle, child
         "personal-add-device-header": true,
         "opacity-50": stepId > currentStep
     });
-    
+
     return (
         <div className="mt-4">
             <span className="personal-add-device-step">Шаг {stepId}</span>
@@ -16,12 +16,15 @@ const StepContainer = ({currentStep, stepId, header, toNextStep, btnTitle, child
                 currentStep >= stepId &&
                 <>
                     {children}
-                    <StepButton
-                        currentStep={currentStep}
-                        stepId={stepId}
-                        toNextStep={toNextStep}
-                        btnTitle={btnTitle}
-                    />
+                    {toNextStep && (
+                        <StepButton
+                            currentStep={currentStep}
+                            stepId={stepId}
+                            toNextStep={toNextStep}
+                            btnTitle={btnTitle}
+                        />
+                    )}
+
                 </>
             }
         </div>
