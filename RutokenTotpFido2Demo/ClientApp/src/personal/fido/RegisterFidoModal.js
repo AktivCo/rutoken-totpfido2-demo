@@ -19,7 +19,7 @@ const RegisterFidoModal = ({isWithoutLogin}) => {
 
     const register = () => {
         setStatus(statuses.loading);
-        dispatch(registerFido())
+        dispatch(registerFido(isWithoutLogin))
             .then((response) => {
                 setStatus(statuses.success);
                 setTimeout(() => {
@@ -52,7 +52,7 @@ const RegisterFidoModal = ({isWithoutLogin}) => {
                         <div className='spinner'></div>
                         <div className='modal-info-text d-flex flex-column align-items-center'>
                             <div>Не отключайте токен</div>
-                            <div>до заверщения процесса</div>
+                            <div>до завершения процесса</div>
                         </div>
                     </div>
                 }

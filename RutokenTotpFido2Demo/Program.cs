@@ -8,10 +8,18 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
-    .AddCookie(options => options.Events.OnRedirectToLogin = opt =>
+    .AddCookie(options =>
     {
-        opt.Response.StatusCode = 403;
-        return Task.FromResult(0);
+        options.Events.OnRedirectToLogin = opt =>
+        {
+            opt.Response.StatusCode = 403;
+            return Task.FromResult(0);
+        };
+        options.Events.OnRedirectToAccessDenied = opt =>
+        {
+            opt.Response.StatusCode = 403;
+            return Task.FromResult(0);
+        };
     });
 
 builder.Services.AddSession(options =>
@@ -34,7 +42,12 @@ builder.Services.AddFido2(options =>
     options.MDSCacheDirPath = builder.Configuration["fido2:MDSCacheDirPath"];
 });
 
-// builder.Services.AddDbContext<EfDbContext>(config => config.UseInMemoryDatabase("test"));
+builder.Services.AddAuthorization(options =>
+{
+    options.AddPolicy("twoFactor", policy => policy.RequireClaim("twoFactor"));
+});
+
+
 builder.Services
     .AddDbContext<EfDbContext>(config =>
         config.UseNpgsql(builder.Configuration.GetConnectionString("Default")));

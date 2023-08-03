@@ -1,6 +1,4 @@
-﻿using System.Data;
-using Fido2NetLib;
-using Microsoft.AspNetCore.Authentication;
+﻿using Fido2NetLib;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using RutokenTotpFido2Demo.Extensions;
@@ -20,35 +18,37 @@ public class MfaController : ControllerBase
         _mfaService = mfaService;
     }
 
-    [HttpGet]
+    [HttpPost]
     [Route("makecredentialoptions")]
-    [Authorize]
-    public JsonResult MakeCredentialOptions()
+    [Authorize(Policy = "twoFactor")]
+    public JsonResult MakeCredentialOptions([FromBody] IsWithoutLoginDTO data)
     {
-        var options = _mfaService.MakeCredentialOptions(User.UserId());
+        var options = _mfaService.MakeCredentialOptions(User.UserId(), data.IsWithoutLogin);
         HttpContext.Session.SetString("fido2.attestationOptions", options);
         return new JsonResult(options);
     }
 
     [HttpPost]
     [Route("makecredential")]
-    [Authorize]
+    [Authorize(Policy = "twoFactor")]
     public async Task<JsonResult> MakeCredential([FromBody] LabelData data, CancellationToken cancellationToken)
     {
         var userId = User.UserId();
-       _mfaService.ValidateLabelFidoKey(userId, data.Label);
+        _mfaService.ValidateLabelFidoKey(userId, data.Label);
 
         var jsonOptions = HttpContext.Session.GetString("fido2.attestationOptions");
         var succes = await _mfaService.MakeCredential(userId, data, jsonOptions, cancellationToken);
+
         return new JsonResult(succes);
     }
 
     [HttpGet]
     [Route("assertionoptions")]
-    [Authorize]
-    public JsonResult AssertionOptionsPost([FromForm] string username, [FromForm] string userVerification)
+    public JsonResult AssertionOptionsPost()
     {
-        var options = _mfaService.AssertionOptionsPost(username, userVerification);
+        int? userId = User.Identity is { IsAuthenticated: true } ? User.UserId() : null;
+
+        var options = _mfaService.AssertionOptionsPost(userId);
 
         HttpContext.Session.SetString("fido2.assertionOptions", options.ToJson());
         return new JsonResult(options);
@@ -56,18 +56,18 @@ public class MfaController : ControllerBase
 
     [HttpPost]
     [Route("makeassertion")]
-    [Authorize]
-    public async Task<JsonResult> MakeAssertion([FromBody] AuthenticatorAssertionRawResponse clientResponse, CancellationToken cancellationToken)
+    public async Task<IActionResult> MakeAssertion([FromBody] AuthenticatorAssertionRawResponse clientResponse,
+        CancellationToken cancellationToken)
     {
         var jsonOptions = HttpContext.Session.GetString("fido2.assertionOptions");
-        var res = await _mfaService.MakeAssertion(jsonOptions, clientResponse, cancellationToken);
-
-        return new JsonResult(res);
+        var userId = await _mfaService.MakeAssertion(jsonOptions, clientResponse, cancellationToken);
+        await HttpContext.SignInTwoFactorAsync(userId);
+        return Ok();
     }
 
     [HttpPost]
     [Route("renamedevice")]
-    [Authorize]
+    [Authorize(Policy = "twoFactor")]
     public JsonResult RenameDevice(IdLabelDTO data)
     {
         _mfaService.ValidateLabelFidoKey(User.UserId(), data.Label);
@@ -77,7 +77,7 @@ public class MfaController : ControllerBase
 
     [HttpPost]
     [Route("deletefidokey")]
-    [Authorize]
+    [Authorize(Policy = "twoFactor")]
     public JsonResult DeleteFidoKey(int id)
     {
         var succes = _mfaService.DeleteFidoKey(id);

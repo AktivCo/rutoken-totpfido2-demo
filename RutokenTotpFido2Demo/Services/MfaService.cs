@@ -24,14 +24,15 @@ public class MfaService
     }
 
 
-    public string MakeCredentialOptions(int userId)
-    { 
+    public string MakeCredentialOptions(int userId, bool isPasswordLess)
+    {
         var user = _context.Users.FirstOrDefault(usr => usr.Id == userId);
 
         if (user == null)
             throw new RTFDException("Пользователь не найден");
 
-        var fidoUser = new Fido2User { Id = BitConverter.GetBytes(user.Id), DisplayName = user.UserName, Name = user.UserName };
+        var fidoUser = new Fido2User
+            { Id = BitConverter.GetBytes(user.Id), DisplayName = user.UserName, Name = user.UserName };
 
         var existingKeys = GetCredentialsByUser(user)
             .Select(c => new PublicKeyCredentialDescriptor(c.CredentialId))
@@ -41,8 +42,11 @@ public class MfaService
 
         var authenticatorSelection = new AuthenticatorSelection
         {
-            RequireResidentKey = attestation.RequireResidentKey,
-            UserVerification = attestation.UserVerification.ToEnum<UserVerificationRequirement>()
+            RequireResidentKey = isPasswordLess,
+            UserVerification =
+                isPasswordLess ? 
+                    UserVerificationRequirement.Required : 
+                    UserVerificationRequirement.Preferred
         };
 
         if (!string.IsNullOrEmpty(attestation.AuthType))
@@ -54,12 +58,14 @@ public class MfaService
             UserVerificationMethod = true,
         };
 
-        var options = RequestNewCredential(fidoUser, existingKeys, authenticatorSelection, attestation.AttType.ToEnum<AttestationConveyancePreference>(), exts);
+        var options = RequestNewCredential(fidoUser, existingKeys, authenticatorSelection,
+            attestation.AttType.ToEnum<AttestationConveyancePreference>(), exts);
 
         return options.ToJson();
     }
 
-    public async Task<CredentialMakeResult> MakeCredential(int userId, LabelData labelData, string? jsonOptions, CancellationToken cancellationToken)
+    public async Task<CredentialMakeResult> MakeCredential(int userId, LabelData labelData, string? jsonOptions,
+        CancellationToken cancellationToken)
     {
         var options = CredentialCreateOptions.FromJson(jsonOptions);
 
@@ -68,7 +74,8 @@ public class MfaService
             return await GetUsersByCredentialIdAsync(args.CredentialId, cancellationToken);
         };
 
-        var success = await MakeNewCredentialAsync(labelData.AttestationResponse, options, callback, cancellationToken: cancellationToken);
+        var success = await MakeNewCredentialAsync(labelData.AttestationResponse, options, callback,
+            cancellationToken: cancellationToken);
 
         var credentialId = AddCredentialToUser(new FidoKey
         {
@@ -87,53 +94,61 @@ public class MfaService
         return success;
     }
 
-    public AssertionOptions AssertionOptionsPost(string username, string userVerification)
+    public AssertionOptions AssertionOptionsPost(int? userId)
     {
-        var existingCredentials = new List<PublicKeyCredentialDescriptor>();
-
-        if (!string.IsNullOrEmpty(username))
+        var credentials = new List<PublicKeyCredentialDescriptor>();
+        var isPasswordLess = !userId.HasValue;
+        
+        if (!isPasswordLess)
         {
-            var user = _context.Users.Where(u => u.UserName == username).FirstOrDefault()
-                ?? throw new RTFDException("Пользователь не найден");
-
-            existingCredentials = GetCredentialsByUser(user)
-                .Select(c => new PublicKeyCredentialDescriptor(c.PublicKey))
-                .ToList();
+            credentials =
+                _context.FidoKeys.Where(c => !c.IsPasswordLess && c.UserId == userId)
+                    .Select(c => new PublicKeyCredentialDescriptor(c.CredentialId))
+                    .ToList();
         }
 
-        var exts = new AuthenticationExtensionsClientInputs()
+        var extensions = new AuthenticationExtensionsClientInputs()
         {
-            UserVerificationMethod = true
+            UserVerificationMethod = true,
+            Extensions = true
         };
 
-        var uv = string.IsNullOrEmpty(userVerification) ? UserVerificationRequirement.Discouraged : userVerification.ToEnum<UserVerificationRequirement>();
+        var uv = isPasswordLess ? 
+            UserVerificationRequirement.Required : 
+            UserVerificationRequirement.Preferred;
+
         var options = GetAssertionOptions(
-            existingCredentials,
+            credentials,
             uv,
-            exts
+            extensions
         );
+
         return options;
     }
 
-    public async Task<AssertionVerificationResult> MakeAssertion(string? jsonOptions, AuthenticatorAssertionRawResponse clientResponse, CancellationToken cancellationToken)
+    public async Task<int> MakeAssertion(string? jsonOptions,
+        AuthenticatorAssertionRawResponse clientResponse, CancellationToken cancellationToken)
     {
         var options = AssertionOptions.FromJson(jsonOptions);
 
-        var creds = GetCredentialById(clientResponse.Id) ?? throw new RTFDException("Неизвестный токен");
+        var fidoKey = GetCredentialById(clientResponse.Id) ?? throw new RTFDException("Неизвестный токен");
 
-        var storedCounter = creds.SignatureCounter;
+        var storedCounter = fidoKey.SignatureCounter;
 
-        IsUserHandleOwnerOfCredentialIdAsync callback = async (args, cancellationToken) =>
+        IsUserHandleOwnerOfCredentialIdAsync callback = async (args, token) =>
         {
             var storedCreds = await GetCredentialsByUserHandleAsync(args.UserHandle);
             return storedCreds.Exists(c => c.CredentialId.SequenceEqual(args.CredentialId));
         };
 
-        var res = await MakeAssertionAsync(clientResponse, options, creds.PublicKey, storedCounter, callback, cancellationToken: cancellationToken);
+        var res =
+            await MakeAssertionAsync(
+                clientResponse, options, fidoKey.PublicKey, storedCounter, callback,
+                cancellationToken: cancellationToken);
 
         UpdateCounter(res.CredentialId, res.Counter);
 
-        return res;
+        return fidoKey.UserId;
     }
 
 
@@ -147,7 +162,8 @@ public class MfaService
         var challenge = new byte[_config.ChallengeSize];
         RandomNumberGenerator.Fill(challenge);
 
-        var options = CredentialCreateOptions.Create(_config, challenge, user, authenticatorSelection, attestationPreference, excludeCredentials, extensions);
+        var options = CredentialCreateOptions.Create(_config, challenge, user, authenticatorSelection,
+            attestationPreference, excludeCredentials, extensions);
         return options;
     }
 
@@ -159,7 +175,8 @@ public class MfaService
         CancellationToken cancellationToken = default)
     {
         var parsedResponse = AuthenticatorAttestationResponse.Parse(attestationResponse);
-        var success = await parsedResponse.VerifyAsync(origChallenge, _config, isCredentialIdUniqueToUser, _metadataService, requestTokenBindingId, cancellationToken);
+        var success = await parsedResponse.VerifyAsync(origChallenge, _config, isCredentialIdUniqueToUser,
+            _metadataService, requestTokenBindingId, cancellationToken);
         return new CredentialMakeResult(
             status: "ok",
             errorMessage: string.Empty,
@@ -191,12 +208,12 @@ public class MfaService
         var parsedResponse = AuthenticatorAssertionResponse.Parse(assertionResponse);
 
         var result = await parsedResponse.VerifyAsync(originalOptions,
-                                                        _config.FullyQualifiedOrigins,
-                                                        storedPublicKey,
-                                                        storedSignatureCounter,
-                                                        isUserHandleOwnerOfCredentialIdCallback,
-                                                        requestTokenBindingId,
-                                                        cancellationToken);
+            _config.FullyQualifiedOrigins,
+            storedPublicKey,
+            storedSignatureCounter,
+            isUserHandleOwnerOfCredentialIdCallback,
+            requestTokenBindingId,
+            cancellationToken);
         return result;
     }
 
@@ -215,15 +232,18 @@ public class MfaService
     public IEnumerable<FidoKey> GetCredentialsByUser(User user)
     {
         return _context.FidoKeys
-                .Where(c => c.UserId == user.Id)
-                .ToList();
+            // .Where(c => c.UserId == user.Id)
+            .ToList();
     }
 
     public FidoKey? GetCredentialById(byte[] id)
     {
-        return _context.FidoKeys
-            .ToList()
-            .FirstOrDefault(c => c.CredentialId.AsSpan().SequenceEqual(id));
+        var key =
+            _context.FidoKeys
+                .ToList()
+                .FirstOrDefault(c => c.CredentialId.AsSpan().SequenceEqual(id));
+
+        return key;
     }
 
     public async Task<List<FidoKey>> GetCredentialsByUserHandleAsync(byte[] userId)
@@ -238,7 +258,7 @@ public class MfaService
         CancellationToken cancellationToken = default)
     {
         var cred = await _context.FidoKeys.ToListAsync(cancellationToken: cancellationToken);
-        
+
         var exist = cred.Any(c => c.CredentialId.AsSpan().SequenceEqual(credentialId));
 
         return !exist;

@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using OtpNet;
+using RutokenTotpFido2Demo.Entities;
 using RutokenTotpFido2Demo.Extensions;
 using RutokenTotpFido2Demo.Models;
 using RutokenTotpFido2Demo.Services;
@@ -24,7 +24,7 @@ public class UserController : ControllerBase
 
     [HttpGet]
     [Route("loginstate")]
-    [Authorize]
+    [Authorize(Policy = "twoFactor")]
     public IActionResult LoginState()
     {
         return Ok();
@@ -32,7 +32,7 @@ public class UserController : ControllerBase
 
     [HttpGet]
     [Route("logout")]
-    [Authorize]
+    [Authorize(Policy = "twoFactor")]
     public async Task<IActionResult> SignOut()
     {
         await HttpContext.SignOutAsync();
@@ -41,7 +41,7 @@ public class UserController : ControllerBase
 
     [HttpGet]
     [Route("info")]
-    [Authorize]
+    [Authorize(Policy = "twoFactor")]
     public async Task<IActionResult> Info()
     {
         var userInfo = await _userService.GetUserInfo(User.UserId());
@@ -57,29 +57,39 @@ public class UserController : ControllerBase
         await _userService.Register(model);
         return Ok();
     }
-    
 
     [HttpPost]
     [Route("login")]
     public async Task<IActionResult> Login([FromBody] UserRegisterDto model)
     {
-        var claims = new List<Claim>();
-
         var user = await _userService.Login(model);
 
-        claims.AddRange(new List<Claim>
+        var userInfo = await _userService.GetUserInfo(user.Id);
+
+        var fidoKeys = userInfo.FidoKeys.Any();
+        var totpKeys = userInfo.TotpKeys.Any();
+
+        if (fidoKeys || totpKeys)
         {
-            new("Id", user.Id.ToString()),
-            new("Login", user.UserName.ToString()),
-        });
+            await HttpContext.SignInByUserHandleAsync(user.Id);
+        }
+        else
+        {
+            await HttpContext.SignInTwoFactorAsync(user.Id);
+        }
 
-        var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
 
-        await
-            HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme,
-                new ClaimsPrincipal(identity));
+        if (fidoKeys)
+        {
+            return Ok(new { twoFactorType = "FIDO" });
+        }
+
+        if (totpKeys)
+        {
+            return Ok(new { twoFactorType = "TOTP" });
+        }
+
 
         return Ok();
     }
-    
 }

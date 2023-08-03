@@ -3,8 +3,8 @@ import axios from "axios";
 import {useDispatch, useSelector} from 'react-redux';
 import {setLoginState, checkLoginState} from './actions';
 
-import Login from "./auth/Login";
 import Personal from "./personal/Personal";
+import Auth from "./auth/Auth";
 
 const CheckLogin = () => {
 
@@ -26,7 +26,7 @@ const CheckLogin = () => {
 
     if (loginState == null) return null;
     if (loginState) return <Personal/>;
-    return <Login/>;
+    return <Auth/>;
 
 
 }

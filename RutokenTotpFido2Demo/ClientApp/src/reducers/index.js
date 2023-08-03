@@ -28,6 +28,15 @@ const totpParams = (state = {}, action) => {
     }
 }
 
+const twoFactorType = (state = null, action) => {
+    switch (action.type) {
+        case "SET_TWO_FACTOR_TYPE":
+            return action.payload
+        default:
+            return state
+    }
+}
+
 
 const modal = (state = {modal: null, data: {}}, action) => {
     if (action.type === 'SHOW_MODAL') {
@@ -47,6 +56,7 @@ const rootReducer = combineReducers({
     loginState,
     userInfo,
     totpParams,
+    twoFactorType,
     modal
 });
 
