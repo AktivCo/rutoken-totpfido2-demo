@@ -9,42 +9,47 @@ import {dateToLocale} from "../utils/utils";
 
 const RenderFidoKeysList = ({keys}) => {
     const dispatch = useDispatch();
-    
+
     const [list, setList] = useState([]);
-	const [visible, setVisible] = useState(false);
-    
+    const [visible, setVisible] = useState(false);
+
     const initFidoRef = useRef(null);
 
-    useEffect(() =>  {
+    useEffect(() => {
         setList(keys);
         setVisible(false);
     }, [keys]);
 
-    useEffect(() =>  {
+    useEffect(() => {
         if (initFidoRef && initFidoRef.current)
-            initFidoRef.current.scrollIntoView({ behavior: 'smooth' });
+            initFidoRef.current.scrollIntoView({behavior: 'smooth'});
     }, [visible]);
 
     const registerViewToggle = () => {
         setVisible(true);
-	}
+    }
 
     const deleteDevice = (id) => {
-        dispatch(showModal(DeleteDeviceModal, {action: deleteDeviceCredential, id: id}));
+        dispatch(showModal(DeleteDeviceModal, {
+            title: 'Удаление устройства FIDO2',
+            body: 'Вы уверены, что хотите удалить FIDO2 устройство?',
+            action: deleteDeviceCredential,
+            id: id
+        }));
     }
 
     const deleteDeviceCredential = async (id) => {
         dispatch(deleteDeviceFido(id))
             .then((response) => {
-                    const newKeys = list.filter((item) => item.id !== id);
-                    setList(newKeys);
-                    dispatch(hideModal());
-                });
-	}
+                const newKeys = list.filter((item) => item.id !== id);
+                setList(newKeys);
+                dispatch(hideModal());
+            });
+    }
 
     const renameDevice = async (id) => {
         dispatch(showModal(EditDeviceNameModal, {isCreate: false, credential: id}));
-	}    
+    }
 
     return (
         <div className="pb-4">
@@ -75,17 +80,17 @@ const RenderFidoKeysList = ({keys}) => {
                         register-toggle-link
                         fw-bolder
                         cursor-pointer"
-                        onClick={() => registerViewToggle()}
-                    >
+                     onClick={() => registerViewToggle()}
+                >
                     Добавить Рутокен MFA
                 </div>
             </div>
-                {
-                    visible &&
-                    <div ref={initFidoRef}>
-                        <InitFido setVisible={setVisible}/>
-                    </div>
-                }
+            {
+                visible &&
+                <div ref={initFidoRef}>
+                    <InitFido setVisible={setVisible}/>
+                </div>
+            }
         </div>
     );
 }

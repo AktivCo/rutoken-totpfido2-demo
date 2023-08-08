@@ -13,6 +13,9 @@ const InitTotpStepFour = ({currentStep}) => {
 
     useEffect(() => {
         setError(false);
+        setVerified(false);
+        changeTotpPassword('');
+        
     }, [currentStep])
 
     const check = () => {

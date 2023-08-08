@@ -5,7 +5,7 @@ import {Button} from "reactstrap";
 import ModalComponent from "../../modal/ModalComponent";
 import {hideModal} from "../../actions";
 
-const DeleteDeviceModal = ({action, id}) => {
+const DeleteDeviceModal = ({title, body, action, id}) => {
     const dispatch = useDispatch();
 
     const close = () => {
@@ -19,7 +19,7 @@ const DeleteDeviceModal = ({action, id}) => {
     const renderHeader= () => {
         return (
             <div>
-                Удаление устройства Fido2
+                {title}
             </div>
         );
     }
@@ -40,7 +40,7 @@ const DeleteDeviceModal = ({action, id}) => {
     return (
         <ModalComponent rootCss={'custom-modal'} title={renderHeader()} footer={renderFooter()}>
             <div className="text-center">
-                Вы уверены что хотите удалить устройство Fido2?
+                {body}
             </div>
         </ModalComponent>
     )

@@ -54,9 +54,9 @@ const InitTotpStepTwo = ({currentStep, toNextStep}) => {
                                    value={timeStep}
                                    onChange={(evt) => changeTimeStep(evt.target.value)}
                             >
-                                <option value={15}>15 секунд</option>
                                 <option value={30}>30 секунд</option>
                                 <option value={60}>60 секунд</option>
+                                <option value={120}>120 секунд</option>
                             </Input>
                         </FormGroup>
                         <FormGroup className="col-md-6">
@@ -69,7 +69,6 @@ const InitTotpStepTwo = ({currentStep, toNextStep}) => {
                             >
                                 <option value={0}>SHA1</option>
                                 <option value={1}>SHA256</option>
-                                <option value={2}>SHA512</option>
                             </Input>
                         </FormGroup>
                     </div>
