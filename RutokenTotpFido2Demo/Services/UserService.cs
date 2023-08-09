@@ -85,30 +85,4 @@ public class UserService
 
         return userInfo;
     }
-
-    public async Task RegisterTotp(int userId, TotpParamsDTO totpParamsDto)
-    {
-        var totpKey = new TotpKey
-        {
-            UserId = userId,
-            Secret = totpParamsDto.Secret,
-            HashMode = totpParamsDto.HashMode,
-            TimeStep = totpParamsDto.TimeStep
-        };
-        
-        _context.TotpKeys.Add(totpKey);
-        await _context.SaveChangesAsync();
-    }
-
-    public async Task RemoveTotp(int userId, int keyId)
-    {
-        var key = await
-            _context.TotpKeys.FirstOrDefaultAsync(_ => _.UserId == userId && _.Id == keyId);
-        
-        if (key == null) throw new RTFDException("Ключ не найден");
-        
-        _context.TotpKeys.Remove(key);
-        await _context.SaveChangesAsync();
-    }
-
 }

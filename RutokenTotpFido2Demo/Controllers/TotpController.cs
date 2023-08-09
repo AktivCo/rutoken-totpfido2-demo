@@ -8,20 +8,20 @@ using RutokenTotpFido2Demo.Services;
 namespace RutokenTotpFido2Demo.Controllers;
 
 [Route("totp")]
-// [Authorize]
 public class TotpController : ControllerBase
 {
-    private readonly UserService _userService;
+    private readonly TotpService _totpService;
     private readonly QrCodeService _qrCodeService;
 
-    public TotpController(UserService userService, QrCodeService qrCodeService)
+    public TotpController(TotpService totpService, QrCodeService qrCodeService)
     {
-        _userService = userService;
+        _totpService = totpService;
         _qrCodeService = qrCodeService;
     }
 
     [HttpGet]
     [Route("getsecret")]
+    [Authorize(Policy = "twoFactor")]
     public IActionResult GenerateSecret()
     {
         var key = KeyGeneration.GenerateRandomKey(20);
@@ -33,6 +33,7 @@ public class TotpController : ControllerBase
 
     [HttpPost]
     [Route("qr")]
+    [Authorize(Policy = "twoFactor")]
     public IActionResult Qr([FromBody] TotpParamsDTO totpParams)
     {
         var qrCode = _qrCodeService.GenerateQRCore("", totpParams);
@@ -41,9 +42,9 @@ public class TotpController : ControllerBase
         return Ok("data:image/png;base64," + image);
     }
 
-    // GET
     [HttpPost]
     [Route("check")]
+    [Authorize(Policy = "twoFactor")]
     public IActionResult TotpCheck([FromBody] TotpParamsDTO totpParams)
     {
         var secretKey = totpParams.Secret;
@@ -60,17 +61,33 @@ public class TotpController : ControllerBase
 
     [HttpPost]
     [Route("register")]
+    [Authorize(Policy = "twoFactor")]
     public async Task<IActionResult> RegisterTotp([FromBody] TotpParamsDTO totpParams)
     {
-        await _userService.RegisterTotp(User.UserId(), totpParams);
+        await _totpService.RegisterTotp(User.UserId(), totpParams);
         return Ok();
     }
 
     [HttpGet]
     [Route("remove/{id}")]
+    [Authorize(Policy = "twoFactor")]
     public async Task<IActionResult> RemoveTotp([FromRoute] int id)
     {
-        await _userService.RemoveTotp(User.UserId(), id);
+        await _totpService.RemoveTotp(User.UserId(), id);
         return Ok();
+    }
+
+    [HttpPost]
+    [Route("verify")]
+    public async Task<IActionResult> VerifyTotp([FromBody] TotpVerifyDTO totpVerify, CancellationToken cancellationToken)
+    {
+        var userId = User.UserId();
+
+        var isVerified = await _totpService.VerifyTotp(userId, totpVerify, cancellationToken);
+
+        if (isVerified)
+            await HttpContext.SignInTwoFactorAsync(userId);
+
+        return Ok(isVerified);
     }
 }

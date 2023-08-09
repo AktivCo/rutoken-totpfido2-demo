@@ -55,7 +55,7 @@ builder.Services
 builder.Services.AddScoped<UserService>();
 builder.Services.AddScoped<MfaService>();
 builder.Services.AddScoped<QrCodeService>();
-
+builder.Services.AddScoped<TotpService>();
 
 var app = builder.Build();
 

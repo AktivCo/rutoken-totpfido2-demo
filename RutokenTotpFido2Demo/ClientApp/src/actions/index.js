@@ -195,6 +195,10 @@ const cacheTotpParams = (params) => (dispatch) => {
     return sequense;
 }
 
+const verifyTotp = (code) => {
+    return () => axios.post('/totp/verify', { code });
+}
+
 const registerFido = (isWithoutLogin) => {
     return (dispatch) => {
         let sequense = Promise.resolve();
@@ -399,6 +403,7 @@ export {
     removeTotp,
     cacheTotpParams,
     checkTotp,
+    verifyTotp,
 
     registerFido,
     confirmRegisterFido,
