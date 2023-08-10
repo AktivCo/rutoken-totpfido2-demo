@@ -1,0 +1,61 @@
+.totp-login-title__heading {
+    font-size: 35px;
+    font-weight: 600;
+    line-height: 1.2;
+}
+
+.totp-login-title__description {
+    font-size: 18px;
+}
+
+.totp-login .invalid-feedback {
+    font-size: 14px;
+}
+
+@media (max-height: 640px) {
+    .totp-login-title__heading {
+        font-size: 31px;
+    }
+
+    .totp-login-title__description {
+        font-size: 16px;
+    }
+    
+    .totp-login {
+        & > div:last-child {
+            display: none;
+        }  
+    }
+}
+
+@media (max-width: 640px), (max-height: 480px) {    
+    .totp-login {
+        & .register-form-container {
+            padding: 12px 24px;
+        }
+    }
+}
+
+@media (max-width: 480px) {
+    .totp-login-title__description {
+        & .totp-login-line-separator {
+            display: none;
+        }
+    }
+}
+
+@media (max-height: 480px) {
+    .totp-login-title__heading {
+        font-size: 27px;
+    }
+
+    .totp-login-title__description {
+        font-size: 14px;
+    }
+
+    .totp-login-title__description {
+        & .totp-login-line-separator {
+            display: none;
+        }
+    }
+}

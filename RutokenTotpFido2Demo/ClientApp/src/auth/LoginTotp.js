@@ -37,17 +37,17 @@ const LoginTOTP = () => {
     }
     
     return (
-        <>
-            <div className="position-absolute d-flex flex-column align-items-center text-center" style={{left: 0, right: 0, top: "100px"}}>
-                <h2>Двухфакторная аутентификация</h2>
-                <span>Нажмите кнопку на корпусе Рутокен OTP и введите<br/>отобразившиеся цифры в поле.</span>
+        <div className="d-flex flex-column align-items-center justify-content-around h-100 w-100 totp-login">
+            <div className="d-flex flex-column justify-content-center text-center h-25">
+                <span className="totp-login-title__heading">Двухфакторная аутентификация</span>
+                <span className="totp-login-title__description">Нажмите кнопку на корпусе Рутокен OTP и введите<br className="totp-login-line-separator"/> отобразившиеся цифры в поле.</span>
             </div>
             <div className="register-form-container">
                 <h5 className="text-center mb-4">
                     Одноразовый пароль
                 </h5>
                 <Form onSubmit={handleSubmit}>
-                    {isError && <div className='invalid-feedback d-block mb-2 mx-3' style={{fontSize: "14px"}}>Внутренняя ошибка.<br/>Повторите запрос позже</div>}
+                    {isError && <div className='invalid-feedback d-block mb-2 mx-3'>Внутренняя ошибка.<br/>Повторите запрос позже</div>}
                     <FormGroup>
                         <Input
                             type="text" 
@@ -61,7 +61,7 @@ const LoginTOTP = () => {
                             style={{backgroundImage: "none"}}
                             disabled={isLoading}
                         />
-                        <FormFeedback className="mx-3" style={{fontSize: "14px"}}>
+                        <FormFeedback className="mx-3">
                             Введен неверный одноразовый пароль.<br/>Повторите попытку
                         </FormFeedback>
                     </FormGroup>
@@ -73,7 +73,8 @@ const LoginTOTP = () => {
                     <span className="register-toggle-link fw-bolder cursor-pointer" onClick={() => dispatch(loginWithoutTwoFactor(null))}>Назад</span>
                 </div>
             </div>
-        </>
+            <div className="h-25"></div>
+        </div>
     )
 }
 

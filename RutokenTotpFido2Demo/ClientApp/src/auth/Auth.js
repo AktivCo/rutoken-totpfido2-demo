@@ -15,9 +15,7 @@ const Auth = () => {
         <div className="register-background">
             <div className="container">
                 <div className="d-flex flex-row justify-content-center align-items-center vh-100">
-                    <div className="register-background">
-                        <AuthRenderer twoFactorType={twoFactorType}></AuthRenderer>
-                    </div>
+                    <AuthRenderer twoFactorType={twoFactorType}></AuthRenderer>
                 </div>
             </div>
         </div>

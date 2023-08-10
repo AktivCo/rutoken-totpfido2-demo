@@ -10,6 +10,7 @@
 @import "layout/layout";
 @import "personal/personal";
 @import "personal/fido";
+@import "personal/totp";
 
 * {
     font-family: "Roboto", sans-serif;
@@ -42,7 +43,8 @@ html {
 
 .register-form-container {
     background-color: $white;
-    width: 406px;
+    max-width: 406px;
+    width: 100%;
     padding: 24px 48px 24px 48px;
     border-radius: 16px;
 }
