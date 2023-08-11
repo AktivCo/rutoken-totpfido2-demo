@@ -7,6 +7,7 @@ using System.Security.Cryptography;
 using static Fido2NetLib.Fido2;
 using Microsoft.IdentityModel.Tokens;
 using RutokenTotpFido2Demo.Exceptions;
+using RutokenTotpFido2Demo.Extensions;
 
 namespace RutokenTotpFido2Demo.Services;
 
@@ -35,7 +36,7 @@ public class MfaService
             { Id = BitConverter.GetBytes(user.Id), DisplayName = user.UserName, Name = user.UserName };
 
         var existingKeys = GetCredentialsByUser(user)
-            .Select(c => new PublicKeyCredentialDescriptor(c.CredentialId))
+            .Select(c => new PublicKeyCredentialDescriptor(c.CredentialId.HexStringToByteArray()))
             .ToList();
 
         var attestation = new AttestationResponse();
@@ -71,7 +72,7 @@ public class MfaService
 
         IsCredentialIdUniqueToUserAsyncDelegate callback = async (args, cancellationToken) =>
         {
-            return await GetUsersByCredentialIdAsync(args.CredentialId, cancellationToken);
+            return await GetUsersByCredentialIdAsync(args.CredentialId);
         };
 
         var success = await MakeNewCredentialAsync(labelData.AttestationResponse, options, callback,
@@ -80,12 +81,10 @@ public class MfaService
         var credentialId = AddCredentialToUser(new FidoKey
         {
             UserId = userId,
-            CredentialId = success?.Result.CredentialId,
-            PublicKey = success?.Result.PublicKey,
+            CredentialId = success?.Result.CredentialId.ByteArrayToHexString(),
+            PublicKey = success?.Result.PublicKey.ByteArrayToHexString(),
             SignatureCounter = success.Result.Counter,
-            CredType = success?.Result.CredType,
             RegDate = DateTime.Now,
-            AaGuid = success.Result.Aaguid,
             Label = labelData.Label,
             LastLogin = DateTime.Now,
             IsPasswordLess = labelData.IsWithoutLogin
@@ -98,12 +97,12 @@ public class MfaService
     {
         var credentials = new List<PublicKeyCredentialDescriptor>();
         var isPasswordLess = !userId.HasValue;
-        
+
         if (!isPasswordLess)
         {
             credentials =
                 _context.FidoKeys.Where(c => !c.IsPasswordLess && c.UserId == userId)
-                    .Select(c => new PublicKeyCredentialDescriptor(c.CredentialId))
+                    .Select(c => new PublicKeyCredentialDescriptor(c.CredentialId.HexStringToByteArray()))
                     .ToList();
         }
 
@@ -113,9 +112,7 @@ public class MfaService
             Extensions = true
         };
 
-        var uv = isPasswordLess ? 
-            UserVerificationRequirement.Required : 
-            UserVerificationRequirement.Preferred;
+        var uv = isPasswordLess ? UserVerificationRequirement.Required : UserVerificationRequirement.Preferred;
 
         var options = GetAssertionOptions(
             credentials,
@@ -138,15 +135,20 @@ public class MfaService
         IsUserHandleOwnerOfCredentialIdAsync callback = async (args, token) =>
         {
             var storedCreds = await GetCredentialsByUserHandleAsync(args.UserHandle);
-            return storedCreds.Exists(c => c.CredentialId.SequenceEqual(args.CredentialId));
+            var hexCredentialId = args.CredentialId.ByteArrayToHexString();
+            return storedCreds.Exists(c => c.CredentialId == hexCredentialId);
         };
 
         var res =
             await MakeAssertionAsync(
-                clientResponse, options, fidoKey.PublicKey, storedCounter, callback,
+                clientResponse,
+                options,
+                fidoKey.PublicKey.HexStringToByteArray(),
+                storedCounter,
+                callback,
                 cancellationToken: cancellationToken);
 
-        UpdateCounter(res.CredentialId, res.Counter);
+        UpdateCounter(fidoKey, res.Counter);
 
         return fidoKey.UserId;
     }
@@ -175,8 +177,12 @@ public class MfaService
         CancellationToken cancellationToken = default)
     {
         var parsedResponse = AuthenticatorAttestationResponse.Parse(attestationResponse);
-        var success = await parsedResponse.VerifyAsync(origChallenge, _config, isCredentialIdUniqueToUser,
-            _metadataService, requestTokenBindingId, cancellationToken);
+
+        var success = await parsedResponse.VerifyAsync(origChallenge,
+            _config,
+            isCredentialIdUniqueToUser,
+            _metadataService,
+            requestTokenBindingId, cancellationToken);
         return new CredentialMakeResult(
             status: "ok",
             errorMessage: string.Empty,
@@ -231,17 +237,19 @@ public class MfaService
 
     public IEnumerable<FidoKey> GetCredentialsByUser(User user)
     {
-        return _context.FidoKeys
-            // .Where(c => c.UserId == user.Id)
-            .ToList();
+        var keys = 
+            _context.FidoKeys.Where(key => key.UserId == user.Id).ToList();
+
+        return keys;
     }
 
     public FidoKey? GetCredentialById(byte[] id)
     {
+        var hexCredentialId = id.ByteArrayToHexString();
+        
         var key =
             _context.FidoKeys
-                .ToList()
-                .FirstOrDefault(c => c.CredentialId.AsSpan().SequenceEqual(id));
+                .FirstOrDefault(c => c.CredentialId == hexCredentialId);
 
         return key;
     }
@@ -254,23 +262,20 @@ public class MfaService
     }
 
 
-    public async Task<bool> GetUsersByCredentialIdAsync(byte[] credentialId,
-        CancellationToken cancellationToken = default)
+    public async Task<bool> GetUsersByCredentialIdAsync(byte[] credentialId)
     {
-        var cred = await _context.FidoKeys.ToListAsync(cancellationToken: cancellationToken);
-
-        var exist = cred.Any(c => c.CredentialId.AsSpan().SequenceEqual(credentialId));
+        var hexCredentialId = credentialId.ByteArrayToHexString();
+        
+        var exist =
+            await _context.FidoKeys.AnyAsync(_ => _.CredentialId == hexCredentialId);
 
         return !exist;
     }
 
-    public void UpdateCounter(byte[] credentialId, uint counter)
+    public void UpdateCounter(FidoKey key, uint counter)
     {
-        var cred = _context.FidoKeys
-            .ToList()
-            .First(c => c.CredentialId.AsSpan().SequenceEqual(credentialId));
-        cred.SignatureCounter = counter;
-        _context.Entry(cred).State = EntityState.Modified;
+        key.SignatureCounter = counter;
+        _context.FidoKeys.Update(key);
         _context.SaveChanges();
     }
 
@@ -299,7 +304,7 @@ public class MfaService
             .SingleOrDefault(x => x.Id == id);
         if (fidoKey != null)
             _context.FidoKeys.Remove(fidoKey);
-
+        
         return _context.SaveChanges() > 0;
     }
 }
