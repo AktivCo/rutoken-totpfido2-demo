@@ -1,6 +1,7 @@
 ﻿using Fido2NetLib;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using RutokenTotpFido2Demo.Exceptions;
 using RutokenTotpFido2Demo.Extensions;
 using RutokenTotpFido2Demo.Models;
 using RutokenTotpFido2Demo.Services;
@@ -61,6 +62,10 @@ public class MfaController : ControllerBase
     {
         var jsonOptions = HttpContext.Session.GetString("fido2.assertionOptions");
         var userId = await _mfaService.MakeAssertion(jsonOptions, clientResponse, cancellationToken);
+        var userLoggedInId = User.Identity is { IsAuthenticated: true } ? User.UserId() : (int?) null;
+        if (userLoggedInId != null && userLoggedInId.Value != userId)
+            throw new RTFDException("Второй фактор не совпадает с первым");
+            
         await HttpContext.SignInTwoFactorAsync(userId);
         return Ok();
     }

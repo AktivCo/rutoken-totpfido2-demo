@@ -101,10 +101,11 @@ public class MfaService
         if (!isPasswordLess)
         {
             credentials =
-                _context.FidoKeys.Where(c => !c.IsPasswordLess && c.UserId == userId)
+                _context.FidoKeys.Where(c => c.UserId == userId)
                     .Select(c => new PublicKeyCredentialDescriptor(c.CredentialId.HexStringToByteArray()))
                     .ToList();
         }
+        
 
         var extensions = new AuthenticationExtensionsClientInputs()
         {
