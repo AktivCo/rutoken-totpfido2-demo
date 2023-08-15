@@ -116,7 +116,7 @@ const Personal = () => {
     if (!userInfo) return <></>;
 
     const renderDateLeft = () => {
-        if(userInfo.hoursLeft == 0) return `${userInfo.minutesLeft} ч.`;
+        if(userInfo.hoursLeft == 0) return `${userInfo.minutesLeft} м.`;
         return `${userInfo.hoursLeft} ч. ${userInfo.minutesLeft} м.`;
     }
     

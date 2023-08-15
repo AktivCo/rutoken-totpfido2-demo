@@ -4,6 +4,7 @@ using RutokenTotpFido2Demo;
 using RutokenTotpFido2Demo.Exceptions;
 using RutokenTotpFido2Demo.Services;
 
+
 var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddControllersWithViews();
@@ -57,8 +58,9 @@ builder.Services.AddScoped<MfaService>();
 builder.Services.AddScoped<QrCodeService>();
 builder.Services.AddScoped<TotpService>();
 
-var app = builder.Build();
+builder.Services.AddHostedService<RemoveOldUsersHostedService>();
 
+var app = builder.Build();
 using var scope = app.Services.CreateScope();
 var db = scope.ServiceProvider.GetRequiredService<EfDbContext>();
 db.Database.Migrate();

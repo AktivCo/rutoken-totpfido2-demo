@@ -88,16 +88,24 @@ public class UserService
 
         var endOfRegistrations = user.RegisterDate.AddDays(2);
         
-        
         var diff = endOfRegistrations - DateTime.UtcNow;
 
+        var minutes = diff.Minutes;
+        var hours = diff.Hours + diff.Days * 24;
+
+        if (diff.TotalMinutes <= 0)
+        {
+            minutes = 0;
+            hours = 0;
+        }
+        
         return new UserInfoDTO
         {
             UserName = user.UserName,
             FidoKeys = user.FidoKeys,
             TotpKeys = user.TotpKeys,
-            HoursLeft = diff.Hours + (diff.Days * 24),
-            MinutesLeft = diff.Minutes
+            HoursLeft = hours,
+            MinutesLeft = minutes
         };
     }
 }
