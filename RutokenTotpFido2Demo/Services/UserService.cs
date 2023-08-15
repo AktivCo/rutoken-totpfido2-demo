@@ -62,7 +62,8 @@ public class UserService
         await _context.Users.AddAsync(new User
         {
             UserName = model.UserName,
-            Password = hashedPassword
+            Password = hashedPassword,
+            RegisterDate = DateTime.UtcNow
         });
 
         await _context.SaveChangesAsync();
@@ -71,18 +72,32 @@ public class UserService
 
     public async Task<UserInfoDTO> GetUserInfo(int userId)
     {
-        var userInfo =
+        var user =
             await _context.Users
                 .Where(x => x.Id == userId)
-                .Select(x => new UserInfoDTO
+                .Select(x => new
                 {
                     UserName = x.UserName,
                     FidoKeys = x.FidoKeys,
-                    TotpKeys = x.TotpKeys
+                    TotpKeys = x.TotpKeys,
+                    RegisterDate = x.RegisterDate
                 })
                 .FirstOrDefaultAsync();
 
+        if (user == null) return null;
 
-        return userInfo;
+        var endOfRegistrations = user.RegisterDate.AddDays(2);
+        
+        
+        var diff = endOfRegistrations - DateTime.UtcNow;
+
+        return new UserInfoDTO
+        {
+            UserName = user.UserName,
+            FidoKeys = user.FidoKeys,
+            TotpKeys = user.TotpKeys,
+            HoursLeft = diff.Hours + (diff.Days * 24),
+            MinutesLeft = diff.Minutes
+        };
     }
 }

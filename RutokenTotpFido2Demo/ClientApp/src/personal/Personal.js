@@ -105,6 +105,7 @@ const DevicesContainer = ({fidoKeys, totpKeys}) => {
 
 const Personal = () => {
     const userInfo = useSelector(state => state.userInfo);
+    
 
     const dispatch = useDispatch();
 
@@ -114,7 +115,11 @@ const Personal = () => {
 
     if (!userInfo) return <></>;
 
-
+    const renderDateLeft = () => {
+        if(userInfo.hoursLeft == 0) return `${userInfo.minutesLeft} ч.`;
+        return `${userInfo.hoursLeft} ч. ${userInfo.minutesLeft} м.`;
+    }
+    
     return (
         <Layout>
             <div className="personal">
@@ -132,7 +137,7 @@ const Personal = () => {
                     </div>
                     <div className="personal-expiration">
                         <div className="personal-expiration__text">Срок действия учётной записи:</div>
-                        <div className="personal-expiration__value">{userInfo.expiration}</div>
+                        <div className="personal-expiration__value">{renderDateLeft()}</div>
                     </div>
                     <RenderTwoFactor {...userInfo} />
                 </div>

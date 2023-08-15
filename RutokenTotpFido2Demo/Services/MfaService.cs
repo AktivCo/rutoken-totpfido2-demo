@@ -84,9 +84,9 @@ public class MfaService
             CredentialId = success?.Result.CredentialId.ByteArrayToHexString(),
             PublicKey = success?.Result.PublicKey.ByteArrayToHexString(),
             SignatureCounter = success.Result.Counter,
-            RegDate = DateTime.Now,
+            RegDate = DateTime.UtcNow,
             Label = labelData.Label,
-            LastLogin = DateTime.Now,
+            LastLogin = DateTime.UtcNow,
             IsPasswordLess = labelData.IsWithoutLogin
         });
 
@@ -276,6 +276,7 @@ public class MfaService
     public void UpdateCounter(FidoKey key, uint counter)
     {
         key.SignatureCounter = counter;
+        key.LastLogin = DateTime.UtcNow;
         _context.FidoKeys.Update(key);
         _context.SaveChanges();
     }

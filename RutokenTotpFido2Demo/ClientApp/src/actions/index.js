@@ -91,7 +91,7 @@ const signOut = () => {
 
         sequense = sequense.then(() => axios.get('/user/logout'));
 
-        sequense = sequense.then(() => window.location.reload());
+        sequense = sequense.then(() => window.location.href = '/');
 
         return sequense;
     };
@@ -196,7 +196,7 @@ const cacheTotpParams = (params) => (dispatch) => {
 }
 
 const verifyTotp = (code) => {
-    return () => axios.post('/totp/verify', { code });
+    return () => axios.post('/totp/verify', {code});
 }
 
 const registerFido = (isWithoutLogin) => {
@@ -281,7 +281,7 @@ const loginFido = () => {
         });
 
         sequense = sequense.then((result) => {
-            
+
             setTimeout(() => dispatch(SET_LOGIN_STATE(true)), 1000);
         });
 

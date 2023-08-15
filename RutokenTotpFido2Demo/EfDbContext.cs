@@ -19,15 +19,7 @@ public class EfDbContext : DbContext
         modelBuilder
             .Entity<User>()
             .HasKey(el => el.Id);
-
-        modelBuilder
-            .Entity<FidoKey>()
-            .Property(p => p.RegDate)
-            .HasConversion<DateTimeConverter>();
-        modelBuilder
-            .Entity<FidoKey>()
-            .Property(p => p.LastLogin)
-            .HasConversion<DateTimeConverter>();
+        
         modelBuilder
             .Entity<FidoKey>()
             .HasKey(el => el.Id);
@@ -54,14 +46,4 @@ public class EfDbContext : DbContext
     public DbSet<User> Users { get; set; }
     public DbSet<TotpKey> TotpKeys { get; set; }
     public DbSet<FidoKey> FidoKeys { get; set; }
-}
-
-public class DateTimeConverter : ValueConverter<DateTime, DateTime>
-{
-    public DateTimeConverter()
-        : base(
-            set => set.Kind == DateTimeKind.Utc ? set : DateTime.SpecifyKind(set, DateTimeKind.Utc),
-            get => get.Kind == DateTimeKind.Local ? get : DateTime.SpecifyKind(get, DateTimeKind.Local))
-    {
-    }
 }
