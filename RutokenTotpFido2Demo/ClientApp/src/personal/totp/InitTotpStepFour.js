@@ -4,22 +4,43 @@ import {Form, FormGroup, Input, Label} from "reactstrap";
 import {useDispatch} from "react-redux";
 import {checkTotp, registerTotp} from "../../actions";
 
+
+const RenderError = ({error}) => {
+    console.log(error);
+    if (!error) return null;
+    if (!error.hasOwnProperty('message')) {
+        return (
+            <span className="text-danger">
+                Неверный одноразовый пароль.
+                    <br/>
+                Повторите попытку ввода.
+            </span>
+        )
+    }
+
+    return (
+        <span className="text-danger">
+            {error.message}
+        </span>
+    )
+
+}
 const InitTotpStepFour = ({currentStep}) => {
     const dispatch = useDispatch();
 
     const [totpPassword, changeTotpPassword] = useState('');
     const [verified, setVerified] = useState(false);
-    const [error, setError] = useState(false);
+    const [error, setError] = useState(null);
 
     useEffect(() => {
-        setError(false);
+        setError(null);
         setVerified(false);
         changeTotpPassword('');
-        
+
     }, [currentStep])
 
     const check = () => {
-        setError(false);
+        setError(null);
         setVerified(false);
 
         dispatch(checkTotp(totpPassword))
@@ -27,21 +48,25 @@ const InitTotpStepFour = ({currentStep}) => {
                 setVerified(true);
             })
             .catch(() => {
-                setError(true);
+                setError({});
             });
     }
 
     const onSubmit = (evt) => {
         evt.preventDefault();
-        if(!verified) {
+        if (!verified) {
             check();
             return;
         }
         register();
     }
-    
+
     const register = () => {
-        dispatch(registerTotp());
+        dispatch(registerTotp())
+            .catch((err) => {
+                setVerified(false);
+                setError(err.response.data);
+            });
     }
 
     return (
@@ -81,11 +106,7 @@ const InitTotpStepFour = ({currentStep}) => {
             {
                 error && (
                     <>
-                        <span className="text-danger">
-                            Неверный одноразовый пароль. 
-                            <br/> 
-                            Повторите попытку ввода. 
-                        </span>
+                        <RenderError error={error}></RenderError>
                         <div className="d-block mt-2">
                             <a className="fw-bolder cursor-pointer"
                                href="https://dev.rutoken.ru/"
@@ -95,8 +116,6 @@ const InitTotpStepFour = ({currentStep}) => {
                             </a>
                         </div>
                     </>
-
-
                 )
             }
             {

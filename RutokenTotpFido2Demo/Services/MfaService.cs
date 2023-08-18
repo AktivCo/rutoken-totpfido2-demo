@@ -45,9 +45,7 @@ public class MfaService
         {
             RequireResidentKey = isPasswordLess,
             UserVerification =
-                isPasswordLess ? 
-                    UserVerificationRequirement.Required : 
-                    UserVerificationRequirement.Preferred
+                isPasswordLess ? UserVerificationRequirement.Required : UserVerificationRequirement.Preferred
         };
 
         if (!string.IsNullOrEmpty(attestation.AuthType))
@@ -105,7 +103,7 @@ public class MfaService
                     .Select(c => new PublicKeyCredentialDescriptor(c.CredentialId.HexStringToByteArray()))
                     .ToList();
         }
-        
+
 
         var extensions = new AuthenticationExtensionsClientInputs()
         {
@@ -238,7 +236,7 @@ public class MfaService
 
     public IEnumerable<FidoKey> GetCredentialsByUser(User user)
     {
-        var keys = 
+        var keys =
             _context.FidoKeys.Where(key => key.UserId == user.Id).ToList();
 
         return keys;
@@ -247,7 +245,7 @@ public class MfaService
     public FidoKey? GetCredentialById(byte[] id)
     {
         var hexCredentialId = id.ByteArrayToHexString();
-        
+
         var key =
             _context.FidoKeys
                 .FirstOrDefault(c => c.CredentialId == hexCredentialId);
@@ -266,7 +264,7 @@ public class MfaService
     public async Task<bool> GetUsersByCredentialIdAsync(byte[] credentialId)
     {
         var hexCredentialId = credentialId.ByteArrayToHexString();
-        
+
         var exist =
             await _context.FidoKeys.AnyAsync(_ => _.CredentialId == hexCredentialId);
 
@@ -283,8 +281,15 @@ public class MfaService
 
     public int AddCredentialToUser(FidoKey credential)
     {
+        var exist = _context.TotpKeys.Any(c => c.UserId == credential.UserId);
+
+        if (exist)
+            throw new RTFDException("К учетной записи уже привязан ключ другого типа.");
+
+
         _context.FidoKeys.Add(credential);
         _context.SaveChanges();
+        
         return credential.Id;
     }
 
@@ -292,6 +297,7 @@ public class MfaService
     {
         var fidoKey = _context.FidoKeys
             .SingleOrDefault(x => x.Id == data.Id);
+        
         if (fidoKey != null)
         {
             fidoKey.Label = data.Label;
@@ -306,7 +312,7 @@ public class MfaService
             .SingleOrDefault(x => x.Id == id);
         if (fidoKey != null)
             _context.FidoKeys.Remove(fidoKey);
-        
+
         return _context.SaveChanges() > 0;
     }
 }

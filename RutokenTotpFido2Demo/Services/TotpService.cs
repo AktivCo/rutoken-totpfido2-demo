@@ -17,6 +17,22 @@ namespace RutokenTotpFido2Demo.Services
 
         public async Task RegisterTotp(int userId, TotpParamsDTO totpParamsDto)
         {
+            var user =
+                await _context.Users
+                    .Where(x => x.Id == userId)
+                    .Select(x => new
+                    {
+                        FidoKeys = x.FidoKeys,
+                        TotpKeys = x.TotpKeys,
+                    })
+                    .FirstOrDefaultAsync();
+
+            if (user == null || (user != null && (user.FidoKeys.Any() || user.TotpKeys.Any())))
+            {
+                throw new RTFDException("К учетной записи уже привязан ключ другого типа.");
+            }
+
+
             var totpKey = new TotpKey
             {
                 UserId = userId,
@@ -42,9 +58,10 @@ namespace RutokenTotpFido2Demo.Services
 
         public async Task<bool> VerifyTotp(int userId, TotpVerifyDTO totpVerify, CancellationToken cancellationToken)
         {
-            var key = await
-                _context.TotpKeys.FirstOrDefaultAsync(_ => _.UserId == userId, cancellationToken) ?? throw new RTFDException("Ключ не подключен");
-            
+            var key = 
+                await _context.TotpKeys.FirstOrDefaultAsync(_ => _.UserId == userId, cancellationToken) ??
+                      throw new RTFDException("Ключ не подключен");
+
             var totp = new Totp(Base32Encoding.ToBytes(key.Secret), key.TimeStep, key.HashMode);
 
             return totp.VerifyTotp(totpVerify.Code, out _, new VerificationWindow(previous: 3));
