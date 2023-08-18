@@ -31,6 +31,11 @@ const InitTotpStepTwo = ({currentStep, toNextStep}) => {
                 changeSecret(generatedSecret);
             });
     }
+    
+    const onSubmit = (evt) => {
+        evt.preventDefault();
+        submit();
+    }
 
     return (
         <StepContainer
@@ -43,8 +48,7 @@ const InitTotpStepTwo = ({currentStep, toNextStep}) => {
                 Выберите настройки здесь и продублируйте их в приложении.
             </div>
             <div disabled={stepId !== currentStep}>
-                <Form className="mt-2">
-
+                <Form className="mt-2" onSubmit={(evt) => onSubmit(evt)}>
                     <div className="row">
                         <FormGroup className="col-md-6">
                             <Label for="timeStep" className="mr-sm-2">Шаг времени</Label>
@@ -79,6 +83,7 @@ const InitTotpStepTwo = ({currentStep, toNextStep}) => {
                                 type="text"
                                 className="form-control"
                                 name="select" value={secret}
+                                autoFocus
                                 onChange={(evt) => changeSecret(evt.target.value)}
                             />
                         </FormGroup>

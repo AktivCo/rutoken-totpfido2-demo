@@ -30,6 +30,20 @@ const InitTotpStepFour = ({currentStep}) => {
                 setError(true);
             });
     }
+
+    const onSubmit = (evt) => {
+        evt.preventDefault();
+        if(!verified) {
+            check();
+            return;
+        }
+        register();
+    }
+    
+    const register = () => {
+        dispatch(registerTotp());
+    }
+
     return (
         <StepContainer
             stepId={4}
@@ -40,7 +54,7 @@ const InitTotpStepFour = ({currentStep}) => {
                 Нажмите кнопку на корпусе Rutoken OTP <br/>
                 и введите отобразившиеся цифры в поле.
             </div>
-            <Form className="mt-2">
+            <Form className="mt-2" onSubmit={(evt) => onSubmit(evt)}>
                 <div className="row">
                     <FormGroup className="col-md-6">
                         <Label for="secret" className="mr-sm-2">Одноразовый пароль</Label>
@@ -49,6 +63,7 @@ const InitTotpStepFour = ({currentStep}) => {
                             type="text"
                             className="form-control"
                             name="select" value={totpPassword}
+                            autoFocus
                             onChange={(evt) => changeTotpPassword(evt.target.value)}
                         />
                     </FormGroup>
@@ -96,7 +111,7 @@ const InitTotpStepFour = ({currentStep}) => {
                     disabled={error || !verified}
                     type="button"
                     className="btn btn-danger"
-                    onClick={() => dispatch(registerTotp())}
+                    onClick={() => register()}
                 >
                     Добавить Рутокен OTP
                 </button>
