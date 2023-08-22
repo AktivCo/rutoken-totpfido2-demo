@@ -47,13 +47,8 @@ public class TotpController : ControllerBase
     [Authorize(Policy = "twoFactor")]
     public IActionResult TotpCheck([FromBody] TotpParamsDTO totpParams)
     {
-        var secretKey = totpParams.Secret;
-        var base32Bytes = Base32Encoding.ToBytes(secretKey);
-        var totp = new Totp(base32Bytes, step: totpParams.TimeStep, mode: totpParams.HashMode);
-
-        var checkResult
-            = totp.VerifyTotp(totpParams.TotpPassword, out _, new VerificationWindow(previous: 3));
-
+        var checkResult = _totpService.CheckTotp(totpParams);
+        
         if (!checkResult) return BadRequest();
 
         return Ok();
@@ -79,7 +74,8 @@ public class TotpController : ControllerBase
 
     [HttpPost]
     [Route("verify")]
-    public async Task<IActionResult> VerifyTotp([FromBody] TotpVerifyDTO totpVerify, CancellationToken cancellationToken)
+    public async Task<IActionResult> VerifyTotp([FromBody] TotpVerifyDTO totpVerify,
+        CancellationToken cancellationToken)
     {
         var userId = User.UserId();
 

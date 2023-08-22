@@ -1,3 +1,5 @@
+using System.Text;
+
 namespace RutokenTotpFido2Demo.Extensions;
 
 public static class HexStringHelper
