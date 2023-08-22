@@ -1,3 +1,4 @@
+using System.Text.RegularExpressions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Internal;
 using OtpNet;
@@ -20,21 +21,32 @@ public class UserService
     public async Task<User> Login(UserRegisterDto model)
     {
         if (string.IsNullOrEmpty(model.UserName))
-            throw new RTFDException("Заполните логин");
+        {
+            throw new RTFDException("Логин не может быть пустым", new { name = "login" });
+        }
 
         if (string.IsNullOrEmpty(model.Password))
-            throw new RTFDException("Заполните пароль");
+        {
+            throw new RTFDException("Пароль не может быть пустым", new { name = "password" });
+        }
+
+        var userName = model.UserName.ToLower();
 
         var user = await
-            _context.Users.FirstOrDefaultAsync(usr => usr.UserName == model.UserName.ToLower());
+            _context.Users.FirstOrDefaultAsync(usr => usr.UserName.ToLower() == userName);
 
         if (user == null)
-            throw new RTFDException("Неверное имя пользователя или пароль");
-
+        {
+            throw new RTFDException("Учетной записи с таким логином не существует", new { name = "login" });
+        }
+        
         var password = model.Password.GenerateSHA256Hash();
 
         if (!string.Equals(user.Password, password))
-            throw new RTFDException("Неверное имя пользователя или пароль");
+        {
+            throw new RTFDException("Введен неверный пароль", new { name = "password" });
+        }
+
 
         return user;
     }
@@ -42,19 +54,40 @@ public class UserService
     public async Task Register(UserRegisterDto model)
     {
         if (string.IsNullOrEmpty(model.UserName))
-            throw new RTFDException("Заполните логин");
+        {
+            throw new RTFDException("Логин не может быть пустым", new { name = "login" });
+        }
+
+        var regex = @"^[a-zA-Z0-9_.-]{1,64}$";
+
+        var match = Regex.IsMatch(model.UserName, regex, RegexOptions.IgnoreCase);
+
+        if (!match)
+        {
+            throw new RTFDException(
+                "Логин должен содержать только цифры, латинские буквы и символы \". - _\"",
+                new { name = "login" }
+            );
+        }
 
         if (string.IsNullOrEmpty(model.Password))
-            throw new RTFDException("Заполните пароль");
-
-        var user = await
-            _context.Users.FirstOrDefaultAsync(usr => usr.UserName == model.UserName.ToLower());
-
-        if (user != null) throw new RTFDException("Пользователь существует");
+        {
+            throw new RTFDException("Пароль не может быть пустым", new { name = "password" });
+        }
 
         if (!string.Equals(model.Password, model.RepeatPassword))
         {
-            throw new RTFDException("Подтверждение не совпадает с паролем");
+            throw new RTFDException("Пароли не совпадают", new { name = "repeatPassword" });
+        }
+
+        var userName = model.UserName.ToLower();
+        
+        var user = await
+            _context.Users.FirstOrDefaultAsync(usr => usr.UserName.ToLower() == userName);
+
+        if (user != null)
+        {
+            throw new RTFDException("Пользователь с таким логином уже зарегистрирован", new { name = "login" });
         }
 
         var hashedPassword = model.Password.GenerateSHA256Hash();
@@ -87,7 +120,7 @@ public class UserService
         if (user == null) return null;
 
         var endOfRegistrations = user.RegisterDate.AddDays(2);
-        
+
         var diff = endOfRegistrations - DateTime.UtcNow;
 
         var minutes = diff.Minutes;
@@ -98,7 +131,7 @@ public class UserService
             minutes = 0;
             hours = 0;
         }
-        
+
         return new UserInfoDTO
         {
             UserName = user.UserName,

@@ -76,7 +76,7 @@ const signInOrUp = (toSingUp, userName, password, repeatPassword) => {
 
 
         sequense = sequense.catch(err => {
-            return Promise.reject(err.response.data.message);
+            return Promise.reject(err.response.data);
         });
 
         return sequense;

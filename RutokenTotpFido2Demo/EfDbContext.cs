@@ -19,7 +19,12 @@ public class EfDbContext : DbContext
         modelBuilder
             .Entity<User>()
             .HasKey(el => el.Id);
-        
+
+        modelBuilder
+            .Entity<User>()
+            .HasIndex(el => el.UserName)
+            .IsUnique();
+
         modelBuilder
             .Entity<FidoKey>()
             .HasKey(el => el.Id);

@@ -1,8 +1,9 @@
 import React, {useState} from "react";
 import cn from "classnames";
+import {FormFeedback, Input} from "reactstrap";
 
 const PasswordInput = (props) => {
-
+    
     const [fieldType, setFieldType] = useState("password");
 
     const renderEyeIconClass = (fieldType) => cn({
@@ -17,10 +18,13 @@ const PasswordInput = (props) => {
         <div
             style={{position: 'relative'}}
         >
-            <input {...props}
+            <Input {...props}
                    type={fieldType}
                    autoComplete="new-password"
             />
+            <FormFeedback>
+                {props.feedback}
+            </FormFeedback>
             <span
                 role="button"
                 tabIndex="0"

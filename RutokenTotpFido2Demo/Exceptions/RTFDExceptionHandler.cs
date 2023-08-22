@@ -35,7 +35,8 @@ public class RTFDExceptionHandler
                     await context.Response.WriteAsync(JsonConvert.SerializeObject(
                         new
                         {
-                            message = exceptionToSend.Message
+                            message = exceptionToSend.Message,
+                            payload = exceptionToSend.Payload
                         }
                     )).ConfigureAwait(false);
                 }

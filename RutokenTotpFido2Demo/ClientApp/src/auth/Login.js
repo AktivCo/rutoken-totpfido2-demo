@@ -4,6 +4,7 @@ import {useDispatch} from 'react-redux';
 
 import {signInOrUp, loginPasswordLess} from "../actions";
 import PasswordInput from "../controls/PasswordInput";
+import {FormFeedback, Input} from "reactstrap";
 
 
 const Login = () => {
@@ -48,17 +49,31 @@ const Login = () => {
             </h4>
             <form onSubmit={handleSubmit}>
                 <div className="form-group mb-3">
-                    <input
-                        type="text" maxLength="20"
-                        className="form-control" placeholder="Логин"
-                        value={userName} onChange={handleUserNameChange}/>
+                    <Input 
+                        type="text" 
+                        maxLength="20"
+                        className="form-control" 
+                        placeholder="Логин"
+                        value={userName}
+                        invalid={error && error.payload && error.payload.name === 'login'}
+                        onChange={handleUserNameChange}
+                        style={{backgroundImage: "none"}}
+                    />
+                    <FormFeedback>
+                        {error && error.payload && error.message}
+                    </FormFeedback>
                 </div>
 
                 <div className="form-group mb-3">
                     <PasswordInput
                         maxLength="20"
-                        className="form-control" placeholder="Пароль"
-                        value={password} onChange={handlePasswordChange}
+                        className="form-control" 
+                        placeholder="Пароль"
+                        value={password}
+                        style={{backgroundImage: "none"}}
+                        invalid={error && error.payload && error.payload.name === 'password'}
+                        onChange={handlePasswordChange}
+                        feedback={error && error.payload && error.message}
                     />
                 </div>
 
@@ -79,8 +94,13 @@ const Login = () => {
                         <div className="form-group mb-3">
                             <PasswordInput
                                 maxLength="20"
-                                className="form-control" placeholder="Повторите пароль"
-                                value={repeatPassword} onChange={handleRepeatPasswordChange}
+                                className="form-control" 
+                                placeholder="Повторите пароль"
+                                style={{backgroundImage: "none"}}
+                                value={repeatPassword} 
+                                invalid={error && error.payload && error.payload.name === 'repeatPassword'}
+                                onChange={handleRepeatPasswordChange}
+                                feedback={error && error.payload && error.message}
                             />
                         </div>
                         <div className="form-group mb-3">
@@ -130,8 +150,8 @@ const Login = () => {
 
                 }
                 {
-                    error ?
-                        <small className="d-block text-center text-danger">{error}</small>
+                    (error && !error.payload) ?
+                        <small className="d-block text-center text-danger">{error.message}</small>
                         : <></>
                 }
             </form>
