@@ -38,8 +38,3 @@ $border-color: $gray-brightest;
 $key-container-red:$red-light;
 $key-container-green:$surfie-green-light;
 $key-container-dark:$surfie-green-dark;
-
-.person-icon {
-    @include normal-icon;
-    background-image: $person-icon;
-}

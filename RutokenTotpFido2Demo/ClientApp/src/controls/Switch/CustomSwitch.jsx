@@ -1,6 +1,6 @@
 import React from 'react';
 import { Input } from 'reactstrap';
-import cl from './CustomSwitch.module.css'
+import cl from './CustomSwitch.module.scss'
 
 const CustomSwitch = ({checked, setChecked}) => {
     return (

@@ -120,10 +120,6 @@ html {
     @include large-icon;
     background-image: $attention-big;
 }
-.person-icon {
-    @include normal-icon;
-    background-image: $person-icon;
-}
 .bucket-icon {
     @include normal-icon;
     background-image: $bucket-icon;
