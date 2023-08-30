@@ -51,7 +51,7 @@ public class UserService
         return user;
     }
 
-    public async Task Register(UserRegisterDto model)
+    public async Task<int> Register(UserRegisterDto model)
     {
         if (string.IsNullOrEmpty(model.UserName))
         {
@@ -92,7 +92,7 @@ public class UserService
 
         var hashedPassword = model.Password.GenerateSHA256Hash();
 
-        await _context.Users.AddAsync(new User
+        var newUser = await _context.Users.AddAsync(new User
         {
             UserName = model.UserName,
             Password = hashedPassword,
@@ -100,6 +100,8 @@ public class UserService
         });
 
         await _context.SaveChangesAsync();
+
+        return newUser.Entity.Id;
     }
 
 

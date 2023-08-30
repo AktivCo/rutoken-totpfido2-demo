@@ -54,7 +54,8 @@ public class UserController : ControllerBase
     [Route("register")]
     public async Task<IActionResult> Register([FromBody] UserRegisterDto model)
     {
-        await _userService.Register(model);
+        var userId = await _userService.Register(model);
+        await HttpContext.SignInTwoFactorAsync(userId);
         return Ok();
     }
 
