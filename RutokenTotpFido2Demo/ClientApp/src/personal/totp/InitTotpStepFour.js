@@ -82,7 +82,7 @@ const InitTotpStepFour = ({currentStep}) => {
             <Form className="mt-2" onSubmit={(evt) => onSubmit(evt)}>
                 <div className="row">
                     <FormGroup className="col-md-6">
-                        <Label for="secret" className="mr-sm-2">Одноразовый пароль</Label>
+                        <Label for="secret" className="mr-sm-2">Одноразовый пароль:</Label>
                         <Input
                             maxLength={6}
                             type="text"

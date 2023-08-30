@@ -14,7 +14,7 @@ const InitTotpStepOne = ({currentStep, toNextStep}) => {
         >
             <div>
                 Приложение предназначено для настройки устройств Rutoken OTP. <br/>
-                Для работы в нем необходимо устройство с NFC-модулем на базе Android 9.0
+                Для работы в нем необходимо мобильное устройство с NFC-модулем на базе Android 9.0
                 и выше.
             </div>
             <div className="d-block mt-2">

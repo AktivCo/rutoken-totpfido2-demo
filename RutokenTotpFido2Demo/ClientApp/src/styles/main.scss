@@ -49,6 +49,15 @@ html {
     border-radius: 16px;
 }
 
+.btn:disabled, .btn.disabled, fieldset:disabled .btn {
+    border-color: $gray-brightest;
+    background-color: $gray-brightest;
+    color: $gray-light;
+}
+
+.rotate-180 {
+    transform: rotate(180deg);
+}
 
 .personal-container {
     width: 70%;    
@@ -125,6 +134,10 @@ html {
 .edit-icon {
     @include small-icon;
     background-image: $edit-icon;
+}
+.arrow-icon {
+    @include tiny-icon;
+    background-image: $arrow-icon;
 }
 
 .fade-modal {

@@ -228,7 +228,7 @@ public class MfaService
 
         var errorMsg = string.Empty;
         if (findFidoKey != null) errorMsg = "Ключ с таким названием уже создан";
-        else if (string.IsNullOrWhiteSpace(label)) errorMsg = "Назавние ключа не может быть пустым";
+        else if (string.IsNullOrWhiteSpace(label)) errorMsg = "Название ключа не может быть пустым";
 
         if (!errorMsg.IsNullOrEmpty())
             throw new RTFDException(errorMsg);

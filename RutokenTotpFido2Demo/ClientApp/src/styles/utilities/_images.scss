@@ -4,6 +4,12 @@
     background-size: contain;
 }
 
+@mixin tiny-icon {
+    @include centered-icon;
+    height: 14px;
+    width: 14px;
+}
+
 @mixin small-icon {
     @include centered-icon;
     height: 24px;

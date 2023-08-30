@@ -51,7 +51,7 @@ const InitTotpStepTwo = ({currentStep, toNextStep}) => {
                 <Form className="mt-2" onSubmit={(evt) => onSubmit(evt)}>
                     <div className="row">
                         <FormGroup className="col-md-6">
-                            <Label for="timeStep" className="mr-sm-2">Шаг времени</Label>
+                            <Label for="timeStep" className="mr-sm-2">Шаг времени:</Label>
                             <Input type="select"
                                    className="form-control"
                                    name="select"
@@ -64,7 +64,7 @@ const InitTotpStepTwo = ({currentStep, toNextStep}) => {
                             </Input>
                         </FormGroup>
                         <FormGroup className="col-md-6">
-                            <Label for="hashMode">Алгоритм</Label>
+                            <Label for="hashMode">Алгоритм:</Label>
                             <Input type="select"
                                    className="form-control"
                                    name="select"
@@ -78,7 +78,7 @@ const InitTotpStepTwo = ({currentStep, toNextStep}) => {
                     </div>
                     <div className="row">
                         <FormGroup className="col-md-6">
-                            <Label for="secret" className="mr-sm-2">Секретный ключ</Label>
+                            <Label for="secret" className="mr-sm-2">Секретный ключ:</Label>
                             <Input
                                 type="text"
                                 className="form-control"

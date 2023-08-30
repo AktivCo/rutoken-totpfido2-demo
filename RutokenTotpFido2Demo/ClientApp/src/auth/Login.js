@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React, {useState, useMemo} from "react";
 import {useDispatch} from 'react-redux';
 
 
@@ -33,6 +33,13 @@ const Login = () => {
                 setError(err);
             });
     }
+
+    const isContinueDisable = useMemo(() => {
+        if (isRegisterView)
+            return !userName || !password || !repeatPassword;
+        else
+            return !userName || !password;
+    }, [userName, password, repeatPassword, isRegisterView]);
 
     const handleUserNameChange = (evt) => setUserName(evt.target.value);
     const handlePasswordChange = (evt) => setPassword(evt.target.value);
@@ -116,7 +123,7 @@ const Login = () => {
                 {
                     isRegisterView &&
                     <>
-                        <button type="submit" className="btn btn-danger">
+                        <button type="submit" className="btn btn-danger" disabled={isContinueDisable}>
                             Зарегистрироваться
                         </button>
                         <div className="text-center d-block">
@@ -134,7 +141,9 @@ const Login = () => {
                 {
                     !isRegisterView &&
                     <>
-                        <button type="submit" className="btn btn-danger">Продолжить</button>
+                        <button type="submit" className="btn btn-danger" disabled={isContinueDisable}>
+                            Продолжить
+                        </button>
                         <div className="text-center d-block">
 											<span className="
 												register-toggle-link
