@@ -10,4 +10,6 @@ public class TotpKey
     public string Secret { get; set; }
     public OtpHashMode HashMode { get; set; }
     public int TimeStep { get; set; }
+
+    public ICollection<TotpTimeStepLogined> TimeStepLogined { get; } = new List<TotpTimeStepLogined>();
 }

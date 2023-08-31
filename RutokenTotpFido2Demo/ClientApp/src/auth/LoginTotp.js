@@ -9,6 +9,7 @@ const LoginTOTP = () => {
 
     const [isLoading, setIsLoading] = useState(false);
     const [isError, setIsError] = useState(false);
+    const [errorMsg, setErrorMsg] = useState(false);
     const [isVerified, setIsVerified] = useState(null);
     const [code, setCode] = useState("");
 
@@ -32,7 +33,10 @@ const LoginTOTP = () => {
                     dispatch(setLoginState(true));
                 }
             })
-            .catch(() => setIsError(true))
+            .catch((error) => {
+                setErrorMsg(error?.response?.data?.message);
+                setIsError(true);
+            })
             .finally(() => setIsLoading(false));
     }
     
@@ -47,7 +51,7 @@ const LoginTOTP = () => {
                     Одноразовый пароль
                 </h5>
                 <Form onSubmit={handleSubmit}>
-                    {isError && <div className='invalid-feedback d-block mb-2 mx-3'>Внутренняя ошибка.<br/>Повторите запрос позже</div>}
+                    {isError && !errorMsg && <div className='invalid-feedback d-block mb-2 mx-3'>Внутренняя ошибка.<br/>Повторите запрос позже</div>}
                     <FormGroup>
                         <Input
                             type="text" 
@@ -61,9 +65,13 @@ const LoginTOTP = () => {
                             style={{backgroundImage: "none"}}
                             disabled={isLoading}
                         />
-                        <FormFeedback className="mx-3">
-                            Введен неверный одноразовый пароль.<br/>Повторите попытку
-                        </FormFeedback>
+                        {
+                            (errorMsg) ?
+                                <small className="d-block text-center text-danger">{errorMsg}</small> :
+                                <FormFeedback className="mx-3">
+                                    Введен неверный одноразовый пароль.<br />Повторите попытку
+                                </FormFeedback>
+                        }
                     </FormGroup>
                     <Button type="submit" color="danger" className="mt-3" disabled={isLoading}>
                         Продолжить

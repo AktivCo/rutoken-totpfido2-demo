@@ -65,18 +65,35 @@ namespace RutokenTotpFido2Demo.Services
         public async Task<bool> VerifyTotp(int userId, TotpVerifyDTO totpVerify, CancellationToken cancellationToken)
         {
             var key =
-                await _context.TotpKeys.FirstOrDefaultAsync(_ => _.UserId == userId, cancellationToken) ??
+                await _context.TotpKeys
+                    .Include(x => x.TimeStepLogined)
+                    .FirstOrDefaultAsync(_ => _.UserId == userId, cancellationToken) ??
                 throw new RTFDException("Ключ не подключен");
 
-            return CheckTotp(totpVerify.Code, key.Secret, key.TimeStep, key.HashMode);
+            var isMatch = CheckTotp(true, totpVerify.Code, key.Secret, key.TimeStep, key.HashMode, out long timeStepMatched);
+            var isTimeStepContains = key.TimeStepLogined.Any(x => x.TimeStepMatched == timeStepMatched);
+
+            if (isTimeStepContains)
+            {
+                throw new RTFDException("Одноразовый пароль уже был использован для входа в учетную запись");
+            }
+
+            var checkMatch = isMatch && !isTimeStepContains;
+            if (checkMatch)
+            {
+                key.TimeStepLogined.Add(new TotpTimeStepLogined { TotpId = key.Id, TimeStepMatched = timeStepMatched });
+                _context.SaveChanges();
+            }
+
+            return checkMatch;
         }
 
         public bool CheckTotp(TotpParamsDTO totpCheck)
         {
-            return CheckTotp(totpCheck.TotpPassword, totpCheck.Secret, totpCheck.TimeStep, totpCheck.HashMode);
+            return CheckTotp(false, totpCheck.TotpPassword, totpCheck.Secret, totpCheck.TimeStep, totpCheck.HashMode, out _);
         }
 
-        private bool CheckTotp(string code, string secret, int timeStep, OtpHashMode hashMode)
+        private bool CheckTotp(bool isDrift, string code, string secret, int timeStep, OtpHashMode hashMode, out long timeStepMatched)
         {
             var verifier = new TotpSecretVerifier(secret);
 
@@ -84,7 +101,8 @@ namespace RutokenTotpFido2Demo.Services
 
             var totp = new Totp(secretByteArr, timeStep, hashMode);
 
-            return totp.VerifyTotp(code, out _, VerificationWindow.RfcSpecifiedNetworkDelay);
+            var verificationWindow = isDrift ? VerificationWindow.RfcSpecifiedNetworkDelay : new VerificationWindow();
+            return totp.VerifyTotp(code, out timeStepMatched, verificationWindow);
         }
     }
 }
