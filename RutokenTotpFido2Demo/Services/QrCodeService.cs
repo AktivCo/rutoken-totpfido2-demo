@@ -29,7 +29,7 @@ public class QrCodeService
         var qrCodeData = qrGenerator.CreateQrCode(uriString, QRCodeGenerator.ECCLevel.Q);
 
         var qrCode = new BitmapByteQRCode(qrCodeData);
-        var qrCodeAsBitmapByteArr = qrCode.GetGraphic(20);
+        var qrCodeAsBitmapByteArr = qrCode.GetGraphic(3);
 
         return qrCodeAsBitmapByteArr;
     }

@@ -25,7 +25,7 @@ const QrCodeRenderer = () => {
     return (
         <div>
         <div className="mt-3 d-flex">
-            <img width="120" height="120" src={qrCodeLink} className="personal-qrcode__userlink"></img>
+            <img width="183" height="183" src={qrCodeLink} className="personal-qrcode__userlink"></img>
             <div className="d-flex p-2 align-items-center text-secondary">
                 <small>
                     QR-код для сохранения <br/>
