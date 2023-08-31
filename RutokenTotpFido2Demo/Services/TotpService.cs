@@ -84,7 +84,7 @@ namespace RutokenTotpFido2Demo.Services
 
             var totp = new Totp(secretByteArr, timeStep, hashMode);
 
-            return totp.VerifyTotp(code, out _, new VerificationWindow(previous: 3));
+            return totp.VerifyTotp(code, out _, VerificationWindow.RfcSpecifiedNetworkDelay);
         }
     }
 }
