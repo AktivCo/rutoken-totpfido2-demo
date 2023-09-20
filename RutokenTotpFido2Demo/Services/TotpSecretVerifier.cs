@@ -7,7 +7,7 @@ namespace RutokenTotpFido2Demo.Services;
 
 public class TotpSecretVerifier
 {
-    const string _isBase32 = @"^[a-zA-Z2-7]{1,}$";
+    const string _isBase32 = @"^[a-zA-Z2-7]{1,}[=]{0,}$";
     const string _isHex = @"^[0-9A-Fa-f]{1,}$";
 
     private readonly string _secret;
