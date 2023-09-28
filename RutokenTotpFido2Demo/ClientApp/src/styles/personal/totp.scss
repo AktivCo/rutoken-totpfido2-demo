@@ -12,9 +12,23 @@
     font-size: 14px;
 }
 
+.form-control.is-invalid.totp-input-invalid {
+    background: none;
+}
+
 .totp-arrow {
     position: relative;
     bottom: 1px;
+}
+
+.totp-label {
+    color: $gray-fade;
+    font-size: 15px;
+    margin-bottom: 0.3rem;
+}
+
+.row .mb-none {
+    margin-bottom: 0rem !important;
 }
 
 .totp-info-ol {
@@ -35,6 +49,24 @@
     }
     strong {
         font-weight: 500;
+    }
+}
+
+.small-btn {
+    max-width: 240px;
+    min-width: 240px;
+}
+
+@media (max-width: 767px) {
+    .col-md-5.small-fs {
+        width: 310px;
+    }
+}
+
+@media (min-width: 768px) {
+    .col-md-5.small-fs {
+        flex: 0 0 auto;
+        width: 38%;
     }
 }
 

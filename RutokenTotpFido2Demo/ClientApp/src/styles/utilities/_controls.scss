@@ -7,6 +7,7 @@
 }
 
 .btn-danger {
+  @include font-bolder;
   background-color: $red;
   border-color: $red;
 }
@@ -18,6 +19,7 @@
 
 
 .register-toggle-link {
+  @include font-bolder;
   color: $surfie-green;
   position:relative;
 }

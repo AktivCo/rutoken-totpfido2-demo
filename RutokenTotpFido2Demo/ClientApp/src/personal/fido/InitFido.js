@@ -21,21 +21,21 @@ const InitFido = ({setVisible}) => {
     }
 
     return (
-        <div className='mfa-step-one'>
+        <div className='mfa-step-one gap-16'>
             {
                 fidoKeys.length > 0 &&
                 <div className='d-flex align-items-center justify-content-between gap-4'>
-                    <div className='title-mfa'>Добавить второй фактор защиты</div>
-                    <div className="personal-logout personal-logout__text"
+                    <div className='personal-add-device-header'>Добавить второй фактор защиты</div>
+                    <div className='personal-logout personal-logout__text'
                             onClick={() => close()}
                     >
                         Отменить
                     </div>
                 </div>
             }
-            <div className='d-flex flex-column gap-4'>
+            <div className='d-flex flex-column'>
                 <div className='step-mfa'>ШАГ 1</div>
-                <div className='title-mfa'>Подключите устройство</div>
+                <div className='personal-add-device-header'>Подключите устройство</div>
             </div>
             <div className='d-flex flex-column gap-16'>
                 <div className='image-mfa'></div>

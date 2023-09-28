@@ -8,6 +8,7 @@
     @include centered-icon;
     height: 14px;
     width: 14px;
+    min-width: 14px;
 }
 
 @mixin small-icon {

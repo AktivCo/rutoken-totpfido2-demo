@@ -9,6 +9,7 @@ import InitFido from "./fido/InitFido";
 import InitTotp from "./totp/InitTotp";
 import RenderFidoKeysList from "./RenderFidoKeysList";
 import RenderTotpKeysList from "./RenderTotpKeysList";
+import {LogoutIcon} from "../controls/LogoutIcon"
 
 
 const RenderTwoFactor = ({fidoKeys, totpKeys}) => {
@@ -25,7 +26,7 @@ const RenderTwoFactor = ({fidoKeys, totpKeys}) => {
     return (
         <div className="personal-two-factor">
             <div className="personal-two-factor__text">
-                Двухфакторная защита учётной записи:
+                Двухфакторная защита учетной записи:
             </div>
 
             <div className={renderStatus()}>
@@ -46,7 +47,7 @@ const RenderTwoFactorInit = () => {
 
     return (
         <>
-            <div className="d-flex align-items-center justify-content-between mb-3">
+            <div className="d-flex align-items-center justify-content-between mb-2">
                 <div className="personal-two-factor-heading">Добавить второй фактор защиты</div>
                 {
                     selectedInitType && (
@@ -125,7 +126,7 @@ const Personal = () => {
             <div className="personal">
                 <div className="personal-heading">Личный кабинет</div>
                 <div className="mb-3">
-                    <div className="d-flex justify-content-between align-items-center mb-3">
+                    <div className="d-flex justify-content-between align-items-center mb-1">
                         <div className="personal-info">
                             <div className="personal-info__logo"></div>
                             <div className="personal-info__name">{userInfo.userName}</div>
@@ -133,10 +134,11 @@ const Personal = () => {
                         <div className="personal-logout" onClick={() => dispatch(signOut())}>
                             <div className="personal-logout__text">Выйти</div>
                             <div className="personal-logout__logo"></div>
+                            <LogoutIcon></LogoutIcon>
                         </div>
                     </div>
                     <div className="personal-expiration">
-                        <div className="personal-expiration__text">Срок действия учётной записи:</div>
+                        <div className="personal-expiration__text">Срок действия учeтной записи:</div>
                         <div className="personal-expiration__value">{renderDateLeft()}</div>
                     </div>
                     <RenderTwoFactor {...userInfo} />

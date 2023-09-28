@@ -38,7 +38,7 @@ const QrCodeRenderer = () => {
             <div className="d-flex mt-2 mb-3">
                 <div className="d-flex align-items-center cursor-pointer" onClick={() => collapseClick()}>
                     <div className={collapse ? "totp-arrow arrow-icon me-2" : "totp-arrow arrow-icon me-2 rotate-180"}></div>
-                    <div className="register-toggle-link">Сохраните секретный ключ в приложении и перенесите его на токен</div>
+                    <div className="text-link">Сохраните секретный ключ в приложении и перенесите его на токен</div>
                 </div>
             </div>
             {

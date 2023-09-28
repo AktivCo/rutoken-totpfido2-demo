@@ -71,10 +71,10 @@ const Login = () => {
                     </FormFeedback>
                 </div>
 
-                <div className="form-group mb-3">
+                <div className="form-group">
                     <PasswordInput
                         maxLength="20"
-                        className="form-control" 
+                        className="form-control pr-2" 
                         placeholder="Пароль"
                         value={password}
                         style={{backgroundImage: "none"}}
@@ -133,7 +133,7 @@ const Login = () => {
 												cursor-pointer"
                                                   onClick={() => registerViewToggle()}
                                             >
-												У меня есть аккаунт
+												У меня есть учетная запись
 											</span>
                         </div>
                     </>

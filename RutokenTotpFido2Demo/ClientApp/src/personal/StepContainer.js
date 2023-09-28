@@ -10,7 +10,7 @@ const StepContainer = ({currentStep, stepId, header, toNextStep, btnTitle, child
 
     return (
         <div className="mt-4">
-            <span className="personal-add-device-step">Шаг {stepId}</span>
+            <div className="personal-add-device-step">ШАГ {stepId}</div>
             <div className={renderClass()}>{header}</div>
             {
                 currentStep >= stepId &&

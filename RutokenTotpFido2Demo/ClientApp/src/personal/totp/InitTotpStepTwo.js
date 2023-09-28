@@ -51,7 +51,7 @@ const InitTotpStepTwo = ({currentStep, toNextStep}) => {
                 <Form className="mt-2" onSubmit={(evt) => onSubmit(evt)}>
                     <div className="row">
                         <FormGroup className="col-md-6">
-                            <Label for="timeStep" className="mr-sm-2">Шаг времени:</Label>
+                            <Label for="timeStep" className="totp-label mr-sm-2">Шаг времени</Label>
                             <Input type="select"
                                    className="form-control"
                                    name="select"
@@ -64,7 +64,7 @@ const InitTotpStepTwo = ({currentStep, toNextStep}) => {
                             </Input>
                         </FormGroup>
                         <FormGroup className="col-md-6">
-                            <Label for="hashMode">Алгоритм:</Label>
+                            <Label for="hashMode" className="totp-label">Алгоритм</Label>
                             <Input type="select"
                                    className="form-control"
                                    name="select"
@@ -77,8 +77,8 @@ const InitTotpStepTwo = ({currentStep, toNextStep}) => {
                         </FormGroup>
                     </div>
                     <div className="row">
-                        <FormGroup className="col-md-6">
-                            <Label for="secret" className="mr-sm-2">Секретный ключ:</Label>
+                        <FormGroup className="col-md-6 mb-none">
+                            <Label for="secret" className="totp-label mr-sm-2">Секретный ключ</Label>
                             <Input
                                 type="text"
                                 className="form-control"
@@ -87,7 +87,7 @@ const InitTotpStepTwo = ({currentStep, toNextStep}) => {
                                 onChange={(evt) => changeSecret(evt.target.value)}
                             />
                         </FormGroup>
-                        <FormGroup className="col-md-6  d-flex align-items-center">
+                        <FormGroup className="col-md-6 d-flex align-items-center mb-none">
                             <div className="text-center d-block mt-4">
                             <span className="register-toggle-link fw-bolder cursor-pointer"
                                   onClick={() => generateSecret()}
@@ -98,11 +98,11 @@ const InitTotpStepTwo = ({currentStep, toNextStep}) => {
                         </FormGroup>
                     </div>
                 </Form>
-                <small className="text-secondary d-block">
+                <small className="text-secondary d-block ms-3 mb-2">
                     Введите известный вам ключ для Рутокена OTP или сгенерируйте его.
                 </small>
-                <small className="text-secondary d-block">
-                    Значение ключа должно быть представлено в кодировке base32 или в формате HEX.
+                <small className="text-secondary d-block ms-3">
+                    Значение ключа должно быть представлено в кодировке base32 <br /> или в формате HEX.
                 </small>
             </div>
             {

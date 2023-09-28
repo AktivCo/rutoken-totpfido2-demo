@@ -5,7 +5,7 @@
 .personal-heading {
     font-size: 2rem;
     margin-bottom: 2rem;
-    @include font-bolder();
+    @include font-w-600;
 }
 
 .personal-info {
@@ -33,19 +33,74 @@
     gap: 5px;
     cursor: pointer;
     transition: 0.3s;
+    padding: 0.5rem;
     &:hover > .personal-logout__text {
         color:$red;
     }
-    
+    .logout-icon-hover {
+        max-height: 28px;
+        display: none;
+    }
+    &:hover > .logout-icon-hover {
+        display: block;
+    }
     &:hover > .personal-logout__logo {
-        background: $logout-image-hover;
+        display: none;
+        background: none;
+    }
+    &:hover #logout-animation {
+        animation-play-state: running;
     }
     &:hover {
         color: $red-fade;
         background-color: $gray-lighten;
         border-radius: $border-radius;
     }
-    padding: 0.5rem;
+}
+
+#logout-animation {
+    animation: logout-animation-frame 200ms linear 1 normal forwards;
+    animation-play-state: paused;
+}
+@keyframes logout-animation-frame {
+    0% {
+        transform: translate(0px,0px)
+    } 100% {
+        transform: translate(3px,0px)
+    }
+}
+
+.bucket-block {
+    padding: 6px;
+    border-radius: 8px;
+    cursor: pointer;
+    &:hover > .bucket-icon > .bucket-icon-hover {
+        display: block;
+    }    
+    &:hover > .bucket-icon {
+        background: none;
+    }
+    &:hover #bucket-animation {
+        animation-play-state: running;
+    }
+    &:hover {
+        background: $gray-lighten;
+    }
+    .bucket-icon-hover {
+        display: none;
+    }
+}
+
+#bucket-animation {
+    animation: bucket-animation-frame 200ms linear 1 normal forwards;
+    animation-play-state: paused;
+}
+@keyframes bucket-animation-frame {
+    0% {
+        transform: translate(4.076012px,6.978964px) rotate(0deg)
+    } 100% {
+        transform: translate(4.076012px,6.978964px) rotate(-10.318974deg)
+    }
 }
 
 .personal-logout__logo {
@@ -82,7 +137,7 @@
 .personal-two-factor-heading {
     padding: 4px;
     font-size: 1.5rem;
-    @include font-bolder();
+    @include font-w-600;
     padding: 0.5rem 0 0.5rem 0;
 }
 
@@ -114,12 +169,13 @@
 
 .personal-add-device-header {
     font-size: 1.25rem;
-    @include font-bolder();
-    padding: 0.5rem 0 0.5rem 0;
+    @include font-w-600;
 }
 
 .personal-add-device-step {
-    color: $gray-light;
+    @include font-bolder;
+    color: $gray-tint;
+    font-size: 0.875rem;
 }
 
 .item-device {

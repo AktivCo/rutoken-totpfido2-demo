@@ -38,6 +38,13 @@ $font-size--smallest:12px;
     font-stretch: normal;
 }
 
+
+@mixin font-w-600(){
+    font-weight: 600 !important;
+    font-style: normal;
+    font-stretch: normal;
+}
+
 @mixin font-bolder(){
     font-weight: 500 !important;
     font-style: normal;
@@ -49,6 +56,9 @@ $font-size--smallest:12px;
 }
 .fw-bolder {
     @include font-bolder();
+}
+.fw-w-600 {
+    @include font-w-600();
 }
 .fw-normal {
     @include font-normal();

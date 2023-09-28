@@ -10,18 +10,20 @@ const RenderError = ({error}) => {
     if (!error) return null;
     if (!error.hasOwnProperty('message')) {
         return (
-            <span className="text-danger">
-                Неверный одноразовый пароль.
-                    <br/>
-                Повторите попытку ввода.
-            </span>
+            <div className="text-danger ms-3">
+                <small>
+                    Неверный одноразовый пароль.
+                        <br />
+                    Повторите попытку ввода.
+                </small>
+            </div>
         )
     }
 
     return (
-        <span className="text-danger">
-            {error.message}
-        </span>
+        <div className="text-danger ms-3">
+            <small> {error.message}</small>
+        </div>
     )
 
 }
@@ -76,31 +78,34 @@ const InitTotpStepFour = ({currentStep}) => {
             currentStep={currentStep}
         >
             <div>
-                Нажмите кнопку на корпусе Rutoken OTP <br/>
+                Нажмите кнопку на корпусе Рутокен OTP <br/>
                 и введите отобразившиеся цифры в поле.
             </div>
-            <Form className="mt-2" onSubmit={(evt) => onSubmit(evt)}>
-                <div className="row">
-                    <FormGroup className="col-md-6">
-                        <Label for="secret" className="mr-sm-2">Одноразовый пароль:</Label>
-                        <Input
-                            maxLength={6}
-                            type="text"
-                            className="form-control"
-                            name="select" value={totpPassword}
-                            autoFocus
-                            onChange={(evt) => changeTotpPassword(evt.target.value)}
-                        />
-                    </FormGroup>
-                    <FormGroup className="col-md-6  d-flex align-items-center">
-                        <div className="text-center d-block mt-4">
-                            <span className="register-toggle-link fw-bolder cursor-pointer"
-                                  onClick={() => check()}
-                            >
-                                Проверить
-                            </span>
-                        </div>
-                    </FormGroup>
+            <Form className="mt-3" onSubmit={(evt) => onSubmit(evt)}>
+                <div className="d-flex flex-column">
+                    <Label for="secret" className="totp-label mr-sm-2">Одноразовый пароль</Label>
+                    <div className="d-flex align-items-center gap-20">
+                        <FormGroup className="col-md-5 small-fs mb-none">
+                            <Input
+                                maxLength={6}
+                                type="text"
+                                className="form-control totp-input-invalid mb-0"
+                                name="select" value={totpPassword}
+                                invalid={error}
+                                autoFocus
+                                onChange={(evt) => changeTotpPassword(evt.target.value)}
+                            />
+                        </FormGroup>
+                        <FormGroup className="col-md-6 mb-none d-flex align-items-center">
+                            <div className="text-center d-block">
+                                <span className="register-toggle-link fw-bolder cursor-pointer"
+                                    onClick={() => check()}
+                                >
+                                    Проверить
+                                </span>
+                            </div>
+                        </FormGroup>
+                    </div>
                 </div>
             </Form>
             {
@@ -121,11 +126,11 @@ const InitTotpStepFour = ({currentStep}) => {
             {
                 verified && (
                     <span className="text-success">
-                        Одноразовый пароль верный.
+                        Одноразовый пароль верный
                     </span>
                 )
             }
-            <div className="col-sm-5 mt-4">
+            <div className="col-sm-5 mt-4 small-btn">
                 <button
                     disabled={error || !verified}
                     type="button"

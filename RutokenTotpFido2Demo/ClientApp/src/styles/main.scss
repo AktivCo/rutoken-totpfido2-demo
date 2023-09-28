@@ -19,6 +19,7 @@
 
 html, body {
     width: 100%;
+    min-width: 350px;
     height: 100vh;
     font-size: 18px;
 }
@@ -55,6 +56,14 @@ html {
     color: $gray-light;
 }
 
+.text-link:hover {
+    text-decoration: underline;
+}
+.text-link {
+    @include font-bolder;
+    color: $surfie-green;
+}
+
 .rotate-180 {
     transform: rotate(180deg);
 }
@@ -76,6 +85,8 @@ html {
 
 .modal-dialog {
     max-width: 420px;
+    margin-right: auto;
+    margin-left: auto;
 }
 .modal-body {
     padding: 1.3rem 3.3rem;
@@ -84,9 +95,17 @@ html {
     .modal-body {
         padding: 1rem;
     }
+    .modal-backdrop {
+        min-width: 350px;
+        min-height: 100%;
+    }
 }
 .modal-content {
     border-radius: 12px;
+}
+
+.pr-2 {
+    padding-right: 2rem;
 }
 
 .gap-4 {
@@ -124,9 +143,6 @@ html {
     @include normal-icon;
     background-image: $bucket-icon;
 }
-.bucket-icon:hover {
-    background-image: $bucket-red-icon;
-}
 .edit-icon {
     @include small-icon;
     background-image: $edit-icon;
@@ -138,8 +154,9 @@ html {
 
 .fade-modal {
     animation-name: fade-modal;
-    animation-duration: 2s;
+    animation-duration: 1s;
 }
+
 @keyframes fade-modal {
     from {
         opacity: .0;

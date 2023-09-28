@@ -7,6 +7,8 @@ import EditDeviceNameModal from "./fido/EditDeviceNameModal";
 import DeleteDeviceModal from "./fido/DeleteDeviceModal";
 import {dateToLocale} from "../utils/utils";
 
+import {BucketIcon} from "../controls/BucketIcon"
+
 const RenderFidoKeysList = ({keys}) => {
     const dispatch = useDispatch();
 
@@ -57,8 +59,8 @@ const RenderFidoKeysList = ({keys}) => {
             {list.map((item) =>
                 <div className="item-device d-flex align-items-center justify-content-between" key={item.id}>
                     <div>
-                        <div className="d-flex align-items-center column-gap-4">
-                            <div className="fw-bolder">{item.label}</div>
+                        <div className="d-flex align-items-center column-gap-2">
+                            <div className="fw-w-600">{item.label}</div>
                             <div className="edit-icon cursor-pointer" onClick={() => renameDevice(item.id)}></div>
                         </div>
                         <div>
@@ -71,20 +73,26 @@ const RenderFidoKeysList = ({keys}) => {
                         </div>
                     </div>
 
-                    <div className="bucket-icon cursor-pointer" onClick={() => deleteDevice(item.id)}>
+                    <div className="bucket-block" onClick={() => deleteDevice(item.id)}>
+                        <div className="bucket-icon cursor-pointer" onClick={() => deleteDevice(item.id)}>
+                            <BucketIcon></BucketIcon>
+                        </div>
                     </div>
                 </div>
             )}
-            <div className="d-flex flex-column align-items-center">
-                <div className="
-                        register-toggle-link
-                        fw-bolder
-                        cursor-pointer"
-                     onClick={() => registerViewToggle()}
-                >
-                    Добавить Рутокен MFA
+            {
+                !visible &&
+                <div className="d-flex flex-column align-items-center">
+                    <div className="
+                            register-toggle-link
+                            fw-bolder
+                            cursor-pointer"
+                        onClick={() => registerViewToggle()}
+                    >
+                        Добавить Рутокен MFA
+                    </div>
                 </div>
-            </div>
+            }
             {
                 visible &&
                 <div ref={initFidoRef}>
