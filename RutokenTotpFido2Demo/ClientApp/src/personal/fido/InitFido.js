@@ -54,7 +54,13 @@ const InitFido = ({setVisible}) => {
                         isWithoutLogin &&
                         <div className="without-paswd-text">
                             <div>Беспарольная аутентификация требует поддержки</div>
-                            <div>со стороны браузера и операционной системы. <span className="link-text cursor-pointer">Подробнее</span></div>
+                            <div>со стороны браузера и операционной системы. 
+                                <a className="link-text cursor-pointer ms-1"
+                                      href="https://dev.rutoken.ru/x/QYD0C"
+                                      target="_blank">
+                                    Подробнее
+                                </a>
+                            </div>
                         </div>
                     }
                 </div>

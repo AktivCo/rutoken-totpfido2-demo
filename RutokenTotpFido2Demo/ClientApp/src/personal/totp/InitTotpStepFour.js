@@ -114,7 +114,7 @@ const InitTotpStepFour = ({currentStep}) => {
                         <RenderError error={error}></RenderError>
                         <div className="d-block mt-2">
                             <a className="fw-bolder cursor-pointer"
-                               href="https://dev.rutoken.ru/"
+                               href="https://dev.rutoken.ru/x/Q4D0C"
                                target="_blank"
                             >
                                 Подробнее о возможных ошибках
