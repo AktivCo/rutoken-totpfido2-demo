@@ -30,7 +30,7 @@ const QrCodeRenderer = () => {
                 <small>
                     QR-код для сохранения <br/>
                     секретного ключа <br/>
-                    приложения
+                    в приложении.
                 </small>
             </div>
         </div>
